@@ -2,3 +2,5 @@
 *.exe
 *.exec
 *.out
+*.DSYM
+.DS_Store
