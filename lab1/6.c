@@ -7,17 +7,22 @@
 #define UNEXPECTED_ERROR 3
 #define EPS 0.0001
 
+// считаем дистанцию по теореме пифагора
 float distance(float x1, float y1, float x2, float y2)
 {
     return sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 }
 
+// Решение 
 int solve(float x1, float y1, float x2, float y2, float x3, float y3)
 {
+    // Считаем дистанциюю
     float a = distance(x1, y1, x2, y2);
     float b = distance(x2, y2, x3, y3);
     float c = distance(x3, y3, x1, y1);
 
+
+    // Проверка на то что треугольник существует
     int summ = 0;
     if (a != 0)
         summ += 1;
@@ -42,6 +47,7 @@ int solve(float x1, float y1, float x2, float y2, float x3, float y3)
         }
         else
             return 0;
+            // Треугольник острый
     }
     {
         return 3;

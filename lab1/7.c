@@ -7,7 +7,9 @@
 #define EPS 2.71828
 #define ABS(x) ((x) < 0? -(x): (x))
  
-int factorial(int n)
+
+ int factorial(int n)
+ // Подсчет факториала
 {
     int result = 1;
     for (int i = 1; i <= n; i++)
@@ -18,6 +20,7 @@ int factorial(int n)
 }
 
 float calc_row(float x, float e)
+// Подсчет ряда
 {
     float cur = pow(10, 8);
     float res = 1.0;
@@ -33,6 +36,7 @@ float calc_row(float x, float e)
 
 float abs_error_rate(float f, float s)
 {
+    // Вычисление абсолютной погрешности
     float res;
     res = ABS(f - s);
     return res;
@@ -40,6 +44,7 @@ float abs_error_rate(float f, float s)
 
 float rel_error_rate(float f, float s)
 {
+    // Вычисление относительной погрешности
     float res;
     res = (ABS(f - s) / ABS(f));
     return res;
@@ -49,16 +54,21 @@ int main(void)
 {
     float x, e;
     printf(">> Input x and e in (0, 1]: ");
-    if (scanf("%f%f", &x, &e) != 2)
+    if (scanf("%f%f", &x, &e) != 2) // Ввод + обработка ошибок
         return WRONG_INPUT;
     if (e <= 0 || e > 1)
         return PRECISION_OUT_LIMIT;
     
+    // Запускаем фнкцию подсчета ряда
     float s = calc_row(x, e);
     
-    float f = pow(EPS, x);
+    float f = pow(EPS, x); // Вычисляем истинное значение
+
+    // Ищем точность
     float errt1 = abs_error_rate(f, s);
     float errt2 = rel_error_rate(f, s);
+    
+    // Вывод
     printf("f(x) = %f, s(x) = %f, abs_error = %f, rel_error = %f \n", f, s, errt1, errt2);
     return EXIT_SUCCESS;
 }

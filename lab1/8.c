@@ -1,27 +1,32 @@
 #include <stdio.h>
+#include <math.h>
 
 #define EXIT_SUCCESS 0
 #define WRONG_INPUT 1
 
+
+// Перевод в двоичную сс
 void printBinary(unsigned number)
 {
-    char data[32];
-    for (int i = 0; i < 32; i++)
-    {
-        data[i] = number % 2;
-        number /= 2;
-    }
-    char el = 0;
-    for (int i = 0; i < 32; i++)
-    {   
-        if (data[31 - i] != 0)
-            el = 1;
-        
-        if (el)
-            printf("%d", data[31 - i]);
-    }
+    unsigned v;
+     v = pow(2, 31);
+     for(int i = 1; i <= 32; i++)
+     {
+             if(number >= v)
+             {
+                    printf("1");
+                    number -= v;
+             }
+             else
+                 printf("0");
+ 
+             v /= 2; 
+     }
 }
 
+
+
+// битовый сдиг
 unsigned cyclicRotate(unsigned number, int n)
 {
     for (int i = 0; i < n; i++)

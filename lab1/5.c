@@ -7,7 +7,9 @@ int main(void)
 {
     int res, a, n;
     printf("Input integer a and integer n > 0: ");
-    if (scanf("%d%d", &a, &n) != 2)
+    if (scanf("%d%d", &a, &n) != 2) // Input
+
+    // Обработка ошибок
     {
         printf("Wrong input\n");
         return 1;
@@ -19,6 +21,7 @@ int main(void)
         return 2;
     }
 
+    // Calculate Result
     res = pow(a, n);
     printf("result of a^n = %d\n", res);
 
