@@ -6,7 +6,7 @@
 
 
 // Перевод в двоичную сс
-void printBinary(unsigned number)
+void print_binary(unsigned number)
 {
     unsigned v;
      v = pow(2, 31);
@@ -27,13 +27,13 @@ void printBinary(unsigned number)
 
 
 // битовый сдиг
-unsigned cyclicRotate(unsigned number, int n)
+unsigned cyclic_rotate(unsigned number, int n)
 {
     for (int i = 0; i < n; i++)
     {
-        unsigned lastBIt = number & 1;
+        unsigned last_bIt = number & 1;
         number >>= 1;
-        number += lastBIt << 31;
+        number += last_bIt << 31;
     }
     return number;
 }
@@ -50,9 +50,9 @@ int main(void)
     }
 
 
-    unsigned result = cyclicRotate(a, n);
+    unsigned result = cyclic_rotate(a, n);
     printf("Result: ");
-    printBinary(result);
+    print_binary(result);
     printf("\n");
 
     return EXIT_SUCCESS;
