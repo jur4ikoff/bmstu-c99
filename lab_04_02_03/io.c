@@ -1,5 +1,6 @@
 #include "io.h"
 
+// Ввод строки 
 int string_input(char *str, size_t max_len)
 {
     if (!fgets(str, max_len, stdin))
@@ -13,7 +14,7 @@ int string_input(char *str, size_t max_len)
 }
 
 // Вывод строки, как двумерного массива слов
-void print_line(char matx[MAX_WORDS][MAX_WORD_LEN + 1], size_t n)
+void print_line(char matx[][MAX_WORD_LEN + 1], size_t n)
 {
     printf("Result: ");
     for (size_t i = 0; i < n; i++)
@@ -30,11 +31,10 @@ void print_line(char matx[MAX_WORDS][MAX_WORD_LEN + 1], size_t n)
     printf("\n");
 }
 
+// Функция с обработкой ошибок
 void processing_errors(int exitcode)
 {
-    if (exitcode == 1)
-        printf("Wrong Input\n");
-    else if (exitcode == 2)
+    if (exitcode == 2)
         printf("One of world too long\n");
     else if (exitcode == 3)
         printf("Words too many\n");

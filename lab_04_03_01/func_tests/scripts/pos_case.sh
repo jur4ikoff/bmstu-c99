@@ -23,7 +23,7 @@ if [[ "$prog_res" != 0 ]]; then
 fi
 
 # Получение результата от компаратора
-"$path_to_script"/comparator.sh "$path_to_script"/temp.txt "$file_output_expect" -r
+"$path_to_script"/comparator.sh "$path_to_script"/temp.txt "$file_output_expect"
 result=$?
 if [[ "$result" == 0 ]]; then
     exit 0

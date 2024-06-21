@@ -5,6 +5,7 @@ int main(void)
 {
     // инициализация переменных
     int res;
+    size_t word_count = 0;
     char string1[MAX_STRING_LEN + 1], string2[MAX_STRING_LEN + 1], string[MAX_STRING_LEN * 2 + 1];
     string[0] = 0;
     // Ввод первой строки
@@ -14,7 +15,6 @@ int main(void)
         processing_errors(res);
         return res;
     }
-    // return 0;
     // Ввод второй строки
     res = string_input(string2, MAX_STRING_LEN + 1);
     if (res != 0)
@@ -40,8 +40,6 @@ int main(void)
 
     // Замена знаков препинания на пробел
     char words[MAX_WORDS * 2][MAX_WORD_LEN + 1];
-    size_t word_count = 0;
-    // int separate_words(char words[][MAX_WORD_LEN + 1], char *string, size_t *word_count);
     res = separate_words(words, string, &word_count);
 
     if (res != 0)
@@ -50,6 +48,7 @@ int main(void)
         return res;
     }
 
+    // Удаление неуникальных слов
     res = make_words_unique(words, word_count);
     if (res <= 0)
     {
@@ -57,6 +56,7 @@ int main(void)
         return EMPTY_OUTPUT;
     }
 
+    // Вывод
     print_line(words, word_count);
     return SUCCESS_OUTPUT;
 }

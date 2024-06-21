@@ -2,6 +2,7 @@
 #include "solve.h"
 #include "constants.h"
 
+// Пропуск пробельных символв
 bool clear_spaces(char string[], size_t *index)
 {
     while (isspace(string[*index]) != 0)
@@ -13,6 +14,7 @@ bool clear_spaces(char string[], size_t *index)
     return true;
 }
 
+// Проверка на конец последовательности
 bool check_endline(char string[], size_t *index)
 {
     while (string[*index] != '\0')
@@ -24,16 +26,23 @@ bool check_endline(char string[], size_t *index)
     return true;
 }
 
+// Проверка содержимого кода страны
 bool extraxt_country_code(char string[], size_t *index)
 {
-    if (string[*index] != '+')
-        return false;
-    (*index)++;
-    while (isdigit(string[*index]) != 0)
+    if (string[*index] == '+')
     {
         (*index)++;
-        if (string[*index] == '\0')
-            return false;
+        while (isdigit(string[*index]) != 0)
+        {
+            (*index)++;
+            if (string[*index] == '\0')
+                return false;
+            if (string[*index] == '(')
+                return true;
+        }
+    }
+    else
+    {
         if (string[*index] == '(')
             return true;
     }
@@ -41,6 +50,7 @@ bool extraxt_country_code(char string[], size_t *index)
     return false;
 }
 
+// Проверка кода оператора
 bool extract_operator_code(char string[], size_t *index)
 {
     size_t count = 0;
@@ -54,6 +64,7 @@ bool extract_operator_code(char string[], size_t *index)
     return false;
 }
 
+// Проверка комбинации чисел
 bool check_numbers_combinations(char string[], size_t *index, size_t count)
 {
     size_t cur = 0;
@@ -72,6 +83,7 @@ bool check_numbers_combinations(char string[], size_t *index, size_t count)
     return false;
 }
 
+// Проверка по маске сочетания последних цифр
 bool check_number(char string[], size_t *index)
 {
     bool status = true;

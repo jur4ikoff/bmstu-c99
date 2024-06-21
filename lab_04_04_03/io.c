@@ -1,5 +1,6 @@
 #include "io.h"
 
+// Функция принимает строку из стандартного ввода
 int string_input(char *str, size_t max_len)
 {
     if (!fgets(str, max_len, stdin))

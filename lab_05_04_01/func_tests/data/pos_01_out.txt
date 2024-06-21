@@ -1,0 +1,30 @@
+AASDsds
+GDfdfdsf
+1 1 1 1
+Abcdef
+Ghds
+5 5 5 5
+Apsuvaev
+Ramazan
+5 4 5 4
+Ataev
+Konstantin
+4 4 4 3
+Borisov
+Konstantin
+2 3 4 5
+Borisov
+Nikita
+1 2 3 4
+Popov
+Alexey
+4 4 4 4
+Surname
+Name
+5 5 5 5
+Surname
+Name
+5 5 5 5
+ZZZZZ
+XXXXX
+5 5 5 5

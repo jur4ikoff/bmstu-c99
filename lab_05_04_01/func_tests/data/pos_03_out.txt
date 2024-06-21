@@ -1,0 +1,9 @@
+AAAA
+Abc
+5 5 5 5
+AAAA
+bcd
+4 5 4 5
+AAAA
+cde
+4 4 4 4
