@@ -1,4 +1,4 @@
-#include "constants.h"
+#include "solve.h"
 
 int main(void)
 {
@@ -9,9 +9,9 @@ int main(void)
         printf("Wrong Input\n");
         return rc;
     }
-    if (max_len <= 1)
+    if (max_len < 0)
     {
-        printf("Sequence constant");
+        printf("Error");
         return ERR_SEQ;
     }
     printf("%d\n", max_len);

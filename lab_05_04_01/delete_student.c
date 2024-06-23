@@ -102,7 +102,7 @@ int delete_student_less_mean(const char *filename)
         else
             i++;
     }
-
+    print_bin_file(file);
     fclose(file);
     return rc;
 }

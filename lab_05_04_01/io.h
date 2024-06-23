@@ -12,4 +12,5 @@ int file_size(FILE *f, size_t *size);
 int import(const char *filename_txt, const char *filename_bin);
 int export(const char *filename_bin, const char *filename_txt);
 int check_string(const char *string);
+int print_bin_file(FILE *file);
 #endif

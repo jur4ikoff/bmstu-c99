@@ -57,7 +57,7 @@ int sort_students_in_file(const char *filename)
                 swap_students(file, j * struct_size, (j + 1) * struct_size);
         }
     }
-
+    print_bin_file(file);
     fclose(file);
     return rc;
 }

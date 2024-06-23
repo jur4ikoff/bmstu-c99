@@ -1,4 +1,4 @@
-#include "constants.h"
+#include "solve.h"
 
 /*Найти наибольшую длину монотонного фрагмента последовательности*/
 
@@ -9,13 +9,15 @@ int process(FILE *file, int *max_len)
     if (fscanf(file, "%d", &prev_number) != 1)
         return ERR_OUTPUT;
 
+    size_t read = 1;
     while (fscanf(file, "%d", &current_number) == 1)
     {
+        read++;
         // Если последовательность увеличивается
         if (current_number > prev_number)
         {
             // Обнуляем длину убывающей последовательности
-            if (is_increasing == 0)
+            if (!is_increasing)
                 cur_len_decreasing = 1;
 
             // Увеличиваем длину возрастающей последовательности
@@ -48,9 +50,9 @@ int process(FILE *file, int *max_len)
     // Вывод
     *max_len = (max_len_increasing > max_len_decreasing) ? max_len_increasing : max_len_decreasing;
 
-    /*
     if (*max_len == 1)
-        return ERR_OUTPUT;
-    */
+        *max_len = 0;
+    if (read <= 1)
+        return ERR_SEQ;
     return ERR_OK;
 }

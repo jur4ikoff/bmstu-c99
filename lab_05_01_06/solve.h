@@ -1,5 +1,5 @@
-#ifndef CONST_H
-#define CONST_H
+#ifndef SOLVE_H
+#define SOLVE_H
 #include <stdio.h>
 
 int process(FILE *file, int *max_len);

@@ -129,8 +129,7 @@ int check_string(const char *string)
 // Конвертирует текстовик в бинарник
 int import(const char *filename_txt, const char *filename_bin)
 {
-    FILE *file_txt = fopen(filename_txt, "r");
-    FILE *file_bin = fopen(filename_bin, "wb");
+    FILE *file_txt = fopen(filename_txt, "r"), *file_bin = fopen(filename_bin, "wb");
     struct students_struct student;
     memset(&student, 0, sizeof(student));
     if (file_txt == NULL || file_bin == NULL)
@@ -139,16 +138,15 @@ int import(const char *filename_txt, const char *filename_bin)
     int rc = file_size(file_txt, &size);
     if (rc != ERR_OK)
         return ERR_FILE;
-
     char surname[MAX_SURNAME_LEN + 1], name[MAX_NAME_LEN + 1];
 
     while (fgets(surname, MAX_SURNAME_LEN + 1, file_txt) != NULL)
     {
         rc = check_string(surname);
-        if (rc == ERR_OK)
-            strcpy(student.surname, surname);
-        else
+        if (rc != ERR_OK)
             return rc;
+
+        strcpy(student.surname, surname);
         if (fgets(name, MAX_NAME_LEN + 1, file_txt) != NULL)
         {
             rc = check_string(name);
@@ -176,6 +174,32 @@ int import(const char *filename_txt, const char *filename_bin)
     return rc;
 }
 
+int print_bin_file(FILE *file)
+{
+    int rc = ERR_OK;
+    if (file == NULL)
+        return ERR_FILE;
+    rewind(file);
+
+    size_t size = 0, struct_size = sizeof(struct students_struct);
+    rc = file_size(file, &size);
+    if (rc != ERR_OK)
+        return rc;
+    if (size % struct_size != 0)
+        return ERR_FILE;
+    struct students_struct student;
+    while (fread(&student, struct_size, 1, file) == 1)
+    {
+        printf("%s\n%s\n", student.surname, student.name);
+        for (size_t i = 0; i < MAX_MARKS_LEN; i++)
+        {
+            printf("%d ", student.marks[i]);
+        }
+        printf("\n");
+    }
+    return ERR_OK;
+}
+
 // Реализация флага экспорт. Конвертирует текстовый файл в бинарный
 int export(const char *filename_bin, const char *filename_txt)
 {
@@ -188,17 +212,10 @@ int export(const char *filename_bin, const char *filename_txt)
     memset(&student, 0, sizeof(student));
     while (fread(&student, sizeof(struct students_struct), 1, bin_file) == 1)
     {
-        int read;
         fprintf(txt_file, "%s\n%s\n", student.surname, student.name);
         for (int i = 0; i < MAX_MARKS_LEN; i++)
-        {
-            if (i != MAX_MARKS_LEN - 1)
-                read = fprintf(txt_file, "%u ", student.marks[i]);
-            else
-                read = fprintf(txt_file, "%u\n", student.marks[i]);
-            if (read < 2)
-                return ERR_WRITE;
-        }
+            fprintf(txt_file, "%u ", student.marks[i]);
+        fprintf(txt_file, "\n");
     }
     if (feof(bin_file) == 0)
         return ERR_READ;

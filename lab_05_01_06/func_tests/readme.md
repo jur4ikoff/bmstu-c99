@@ -17,4 +17,3 @@
 | 1     | Пустой файл                                              | ` `       | Empty sequence           |
 | 2     | В файле нет чисел                                        | `c`       | Empty sequence           |
 | 3     | Файл содержит одно число                                 | `1`       | Sequence is not monotone |
-| 4     | В файле отсутствует строго-монотонная последовательность | `1 1 1 1` | Sequence is not monotone |

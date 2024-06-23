@@ -1,14 +1,11 @@
 Surname
 Name
 5 5 5 5
-Surname
-Name
-5 5 5 5
 Popov
 Alexey
 4 4 4 4
 Ataev
-Konstantin
+Konstanti
 4 4 4 3
 Apsuvaev
 Ramazan
@@ -20,7 +17,7 @@ Abcdef
 Ghds
 5 5 5 5
 Borisov
-Konstantin
+Konstanti
 2 3 4 5
 Borisov
 Nikita
