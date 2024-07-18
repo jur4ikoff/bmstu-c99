@@ -1,6 +1,8 @@
 #include "constants.h"
 #include "errors.h"
 #include "io.h"
+#include "solve.h"
+
 /*Задача с экзамена 1. Вычислить структуру с ценой близкой к средней
 3
 Banana
@@ -14,13 +16,19 @@ Mango*/
 int main(void)
 {
     int rc = ERR_OK;
-    int count;
-    if (scanf("%d", &count) != 1)
+    size_t count;
+    if ((rc = input_count(&count)) != ERR_OK)
     {
-        rc = ERR_MAX_COUNT;
         output(rc);
         return rc;
     }
-    printf("%d", count);
+    fgetc(stdin);
+
+    if ((rc = input_products_to_struct(count)) != ERR_OK)
+    {
+        output(rc);
+        return rc;
+    }
+
     return rc;
 }
