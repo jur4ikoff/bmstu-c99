@@ -6,5 +6,4 @@
 #define ERR_OVERFLOW 2
 #define ERR_TO_MANY 3
 #define EMPTY_INPUT 4
-
 #endif

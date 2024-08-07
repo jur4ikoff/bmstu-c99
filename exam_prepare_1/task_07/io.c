@@ -72,6 +72,7 @@ void to_upper_in_brackets(char words[][MAX_WORD_LEN], size_t word_count)
         {
             element[k] = toupper(element[k]);
         }
+        
         printf("%s ", element);
     }
     printf("\n");
