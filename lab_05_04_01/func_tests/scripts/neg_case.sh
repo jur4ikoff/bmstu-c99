@@ -27,11 +27,12 @@ bin_file_name="${file_input%.txt}.bin" # Получаем имя нового б
 "$path_to_script"/../../app.exe import "$file_input" "$bin_file_name"
 rc=$? # Проверка на ошибку конвертации текстовика в бинарник
 if [[ "$rc" != 0 ]]; then
+    rm "$bin_file_name"
     exit 0
 fi
 
 # Проверка основной программы
-("$path_to_script"/../../app.exe "$(< "$args")") >/dev/null
+("$path_to_script"/../../app.exe $(< "$args")) >/dev/null  # Я не придумал, как исправить предупреждение ShellCheck'a, Если поставить кавычки, это ломает программу.
 
 # Получения кода возврата и проверка, что вывод ненулевой
 rc=$?
