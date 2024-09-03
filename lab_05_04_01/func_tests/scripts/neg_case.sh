@@ -6,6 +6,13 @@ if [[ $# -lt 1 ]]; then
     exit 1
 fi
 
+if [[ -n $? 2 ]]; then
+    args=$(cat "$2")
+else
+    args=""
+
+echo $args
+
 file_input=$1
 
 # Проверка существования файла
