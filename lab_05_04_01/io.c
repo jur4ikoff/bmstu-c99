@@ -162,6 +162,9 @@ int import(const char *filename_txt, const char *filename_bin)
         {
             if (fscanf(file_txt, "%" SCNu32, &student.marks[i]) != 1)
                 return ERR_READ;
+
+            if (student.marks[i] > 4294967000)
+                return ERR_READ;
         }
         fgetc(file_txt);
         fwrite(&student, sizeof(struct students_struct), 1, file_bin);

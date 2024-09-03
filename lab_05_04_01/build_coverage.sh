@@ -6,7 +6,7 @@ path_to_script=$(dirname "$(readlink -f "$0")")
 # Компиляция 
 for file in *.c; do
     base=$(basename -s .c "$file")
-    gcc -std=c99 -Wall -Werror -Wpedantic -Wextra -Wfloat-conversion -Wfloat-equal -Wvla -g --coverage -c "$path_to_script"/"$file" -o "$path_to_script"/"$base".o 
+    gcc -std=gnu99 -Wall -Werror -Wpedantic -Wextra -Wfloat-conversion -Wfloat-equal -Wvla -g --coverage -c "$path_to_script"/"$file" -o "$path_to_script"/"$base".o 
     compile_status=$?
     if [[ "$compile_status" != 0 ]]; then
         echo "Error while compiling"
