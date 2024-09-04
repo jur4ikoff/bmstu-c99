@@ -26,7 +26,8 @@ do
         (( pos_count++ )) 
         number=$(echo "${file}" | grep -o "pos_[0-9]\+_in.txt" | grep -o "[0-9]\+")
         output_file="${path_to_script}"/../data/pos_"$number"_out.txt
-        "${path_to_script}"/pos_case.sh "${file}" "${output_file}"
+        path_to_args="${path_to_script}"/../data/pos_"$number"_args.txt
+        "${path_to_script}"/pos_case.sh "${file}" "${output_file}" "$path_to_args"
         res=$?
         if [[ "$res" != 0 ]]; then
             fail_count=$((fail_count + 1))
@@ -43,7 +44,8 @@ do
     elif [[ $file == *neg_*  ]]; then
         (( neg_count++ )) 
         number=$(echo "$file" | grep -o "neg_[0-9]\+_in.txt" | grep -o "[0-9]\+")
-        "$path_to_script"/neg_case.sh "$file"
+        path_to_args="${path_to_script}"/../data/neg_"$number"_args.txt
+        "$path_to_script"/neg_case.sh "$file" "$path_to_args"
         res=$?
         if [[ "$res" != 0 ]]; then
             fail_count=$((fail_count + 1))
