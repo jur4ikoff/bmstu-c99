@@ -1,10 +1,11 @@
-#include "stdio.h"
+/* Небольшая учебная библиотека по матрицам, для подготовки к экзамену*/
+
+#include "constants.h"
+#include "io.h"
 
 int main(void)
 {
-    size_t a;
-    if (scanf("%zu", &a) != 1)
-        return 1;
-    printf("%zu\n", a);
-    return 0;
+    int rc = ERR_OK;
+
+    return rc;
 }
