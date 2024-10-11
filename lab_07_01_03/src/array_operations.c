@@ -115,20 +115,33 @@ void my_sort_test(void *arr, size_t number, size_t width, int (*compare)(const v
 
     char *array = (char *)arr;
 
-    for (size_t i = 0; i < number - 1; i++)
+    bool swapped;
+    size_t last_swap_index;
+    do
     {
-        // Сравниваем элементы с учётом их ширины
-        if (compare(array + i * width, array + (i + 1) * width) > 0)
+        swapped = false;
+        last_swap_index = 0; // Сброс последнего индекса обмена
+
+        for (size_t i = 0; i < number - 1; i++)
         {
-            // Обмен элементов
-            for (size_t j = 0; j < width; j++)
+            // Сравниваем элементы с учётом их ширины
+            if (compare(array + i * width, array + (i + 1) * width) > 0)
             {
-                char temp = array[i * width + j];
-                array[i * width + j] = array[(i + 1) * width + j];
-                array[(i + 1) * width + j] = temp;
+                // Обмен элементов
+                for (size_t j = 0; j < width; j++)
+                {
+                    char temp = array[i * width + j];
+                    array[i * width + j] = array[(i + 1) * width + j];
+                    array[(i + 1) * width + j] = temp;
+                }
+                swapped = true;
+                last_swap_index = i + 1; // Обновляем последний индекс обмена
             }
         }
-    }
+
+        // Уменьшаем число сравнений в следующем проходе
+        number = last_swap_index;
+    } while (swapped);
 }
 
 int compare(const void *elem1, const void *elem2)

@@ -70,12 +70,12 @@ int run_profiling(int mode)
     else
         strcpy(default_filename, "./reverse_sort_arr.csv");
 
-    int a[MAX_SIZE] = {1, 2, -3, 4, -5};
+    /*int a[MAX_SIZE] = {1, 2, -3, 4, -5};
     my_sort_test(a, 5, sizeof(int), compare);
     for (size_t i = 0; i < 5; i++)
     {
         printf("%d\n", a[i]);
-    }
+    }*/
 
     FILE *file = fopen(default_filename, "w");
     fprintf(file, "size;qsort;mysort\n");
