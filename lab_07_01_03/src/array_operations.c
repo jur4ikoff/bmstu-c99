@@ -108,7 +108,7 @@ void my_sort(void *arr, size_t number, size_t width, int (*compare)(const void *
  * и при следующем проходе алгоритм не заходит за это место.
  * Если последними поменялись i-ый и i+1-ый элементы, то при следующем проходе алгоритм не сравнивает элементы за i-м.
  */
-void my_sort_test(void *arr, size_t number, size_t width, int (*compare)(const void *, const void *))
+void buble_sort(void *arr, size_t number, size_t width, int (*compare)(const void *, const void *))
 {
     if (number < 2)
         return;

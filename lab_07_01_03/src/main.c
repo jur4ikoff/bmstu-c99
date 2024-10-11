@@ -13,10 +13,13 @@
 int main(int argc, char **argv)
 {
 #if SORT_TIME_EXP
+    //  Профилирование функций сортировки
     if (run_profiling(1) != ERR_OK)
-    {
         return ERR_FILENAME;
-    }
+    if (run_profiling(2) != ERR_OK)
+        return ERR_FILENAME;
+    if (run_profiling(3) != ERR_OK)
+        return ERR_FILENAME;
     return ERR_OK;
 #endif
     char file_input[MAX_STRING_LEN], file_output[MAX_STRING_LEN];

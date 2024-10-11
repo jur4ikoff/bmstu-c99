@@ -8,7 +8,7 @@
 #include <string.h>
 
 // Генерация массива случайных чисел
-static void generate_array(int array[], size_t len)
+static void generate_random_array(int array[], size_t len)
 {
     srand(time(0));
     for (size_t i = 0; i < len; i++)
@@ -16,6 +16,22 @@ static void generate_array(int array[], size_t len)
         array[i] = rand() % 100;
         if (rand() % 2 == 1)
             array[i] *= -1;
+    }
+}
+
+static void generate_sort_array(int array[], size_t len)
+{
+    for (size_t i = 0; i < len; i++)
+    {
+        array[i] = i;
+    }
+}
+
+static void generate_reverse_sort_array(int array[], size_t len)
+{
+    for (size_t i = 0; i < len; i++)
+    {
+        array[i] = len - i;
     }
 }
 
@@ -64,26 +80,19 @@ int run_profiling(int mode)
     // char default_filename[] = "./../calc_exex_time/random_arr.csv";
     char default_filename[MAX_PART_LEN];
     if (mode == 1)
-        strcpy(default_filename, "./random_arr.csv");
+        strcpy(default_filename, "./../calc_exec_time/random_arr.csv");
     else if (mode == 2)
-        strcpy(default_filename, "./sort_arr.csv");
+        strcpy(default_filename, "./../calc_exec_time/sort_arr.csv");
     else
-        strcpy(default_filename, "./reverse_sort_arr.csv");
-
-    /*int a[MAX_SIZE] = {1, 2, -3, 4, -5};
-    my_sort_test(a, 5, sizeof(int), compare);
-    for (size_t i = 0; i < 5; i++)
-    {
-        printf("%d\n", a[i]);
-    }*/
+        strcpy(default_filename, "./../calc_exec_time/reverse_sort_arr.csv");
 
     FILE *file = fopen(default_filename, "w");
-    fprintf(file, "size;qsort;mysort\n");
+    fprintf(file, "size;qsort;mysort;bublesort\n");
     if (file == NULL)
         return ERR_FILENAME;
 
     struct timespec start_time, end_time;
-    double cpu_time_qsort, cpu_time_my_sort, time;
+    double cpu_time_qsort, cpu_time_my_sort, cpu_time_buble_sort, time;
     size_t size_cur = 1, itteration_count = 0;
     int number_arr[MAX_SIZE];
     double time_array[MAX_ITERATIONS], rse = 100;
@@ -95,7 +104,12 @@ int run_profiling(int mode)
         // Прогон qsort
         while ((itteration_count < MAX_ITERATIONS) && (rse > 1 || itteration_count < MIN_ITERATIONS))
         {
-            generate_array(number_arr, size_cur);
+            if (mode == 1)
+                generate_random_array(number_arr, size_cur); // Генерация рандомного массива
+            else if (mode == 2)
+                generate_sort_array(number_arr, size_cur);
+            else
+                generate_reverse_sort_array(number_arr, size_cur);
 
             clock_gettime(CLOCK_REALTIME, &start_time);
             qsort(&number_arr, size_cur, sizeof(int), compare);
@@ -114,10 +128,15 @@ int run_profiling(int mode)
         itteration_count = 0;
         while ((itteration_count < MAX_ITERATIONS) && (rse > 1 || itteration_count < MIN_ITERATIONS))
         {
-            generate_array(number_arr, size_cur);
+            if (mode == 1)
+                generate_random_array(number_arr, size_cur); // Генерация рандомного массива
+            else if (mode == 2)
+                generate_sort_array(number_arr, size_cur);
+            else
+                generate_reverse_sort_array(number_arr, size_cur);
 
             clock_gettime(CLOCK_REALTIME, &start_time);
-            my_sort_test(&number_arr, size_cur, sizeof(int), compare);
+            my_sort(&number_arr, size_cur, sizeof(int), compare);
             clock_gettime(CLOCK_REALTIME, &end_time);
 
             time = (double)((end_time.tv_sec - start_time.tv_sec) * 1e9 + (end_time.tv_nsec - start_time.tv_nsec));
@@ -128,7 +147,30 @@ int run_profiling(int mode)
         }
         cpu_time_my_sort = mean(time_array, itteration_count);
 
-        fprintf(file, "%zu;%.4f;%.4f\n", size_cur, cpu_time_qsort, cpu_time_my_sort);
+        rse = 100;
+        itteration_count = 0;
+        while ((itteration_count < MAX_ITERATIONS) && (rse > 1 || itteration_count < MIN_ITERATIONS))
+        {
+            if (mode == 1)
+                generate_random_array(number_arr, size_cur); // Генерация рандомного массива
+            else if (mode == 2)
+                generate_sort_array(number_arr, size_cur);
+            else
+                generate_reverse_sort_array(number_arr, size_cur);
+
+            clock_gettime(CLOCK_REALTIME, &start_time);
+            buble_sort(&number_arr, size_cur, sizeof(int), compare);
+            clock_gettime(CLOCK_REALTIME, &end_time);
+
+            time = (double)((end_time.tv_sec - start_time.tv_sec) * 1e9 + (end_time.tv_nsec - start_time.tv_nsec));
+            time_array[itteration_count] = time;
+            itteration_count++;
+            calc_rse(time_array, itteration_count, &rse);
+            // printf("%.2f\n", rse);
+        }
+        cpu_time_buble_sort = mean(time_array, itteration_count);
+
+        fprintf(file, "%zu;%.4f;%.4f;%.4f\n", size_cur, cpu_time_qsort, cpu_time_my_sort, cpu_time_buble_sort);
         size_cur += INCR_COEF;
     }
     fclose(file);
