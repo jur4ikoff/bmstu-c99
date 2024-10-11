@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "errors.h"
+#include <stdio.h>
 
 void print_array(int *begin_arr, int *end_arr)
 {
@@ -100,6 +101,34 @@ void my_sort(void *arr, size_t number, size_t width, int (*compare)(const void *
         // Уменьшаем число сравнений в следующем проходе
         number = last_swap_index;
     } while (swapped);
+}
+
+/**
+ * @brief Модифицированная сортировка пузырьком: Запоминайте, где произошёл последний обмен элементов,
+ * и при следующем проходе алгоритм не заходит за это место.
+ * Если последними поменялись i-ый и i+1-ый элементы, то при следующем проходе алгоритм не сравнивает элементы за i-м.
+ */
+void my_sort_test(void *arr, size_t number, size_t width, int (*compare)(const void *, const void *))
+{
+    if (number < 2)
+        return;
+
+    char *array = (char *)arr;
+
+    for (size_t i = 0; i < number - 1; i++)
+    {
+        // Сравниваем элементы с учётом их ширины
+        if (compare(array + i * width, array + (i + 1) * width) > 0)
+        {
+            // Обмен элементов
+            for (size_t j = 0; j < width; j++)
+            {
+                char temp = array[i * width + j];
+                array[i * width + j] = array[(i + 1) * width + j];
+                array[(i + 1) * width + j] = temp;
+            }
+        }
+    }
 }
 
 int compare(const void *elem1, const void *elem2)

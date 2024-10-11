@@ -4,5 +4,5 @@
 #define MAX_STRING_LEN 256
 #define MAX_COUNT 50
 
-#define SORT_TIME_EXP 0
+#define SORT_TIME_EXP 1
 #endif

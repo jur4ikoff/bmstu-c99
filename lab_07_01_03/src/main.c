@@ -13,13 +13,12 @@
 int main(int argc, char **argv)
 {
 #if SORT_TIME_EXP
-    if (run_profiling() != ERR_OK)
+    if (run_profiling(1) != ERR_OK)
     {
         return ERR_FILENAME;
     }
     return ERR_OK;
 #endif
-
     char file_input[MAX_STRING_LEN], file_output[MAX_STRING_LEN];
     int rc = ERR_OK, *arr = NULL;
     size_t size = 0;

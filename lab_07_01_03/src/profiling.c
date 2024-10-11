@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "errors.h"
 #include <math.h>
+#include <string.h>
 
 // Генерация массива случайных чисел
 static void generate_array(int array[], size_t len)
@@ -58,9 +59,24 @@ static double mean(double array[], size_t count)
     return mean;
 }
 
-int run_profiling(void)
+int run_profiling(int mode)
 {
-    char default_filename[] = {"calc_time/data.csv"};
+    // char default_filename[] = "./../calc_exex_time/random_arr.csv";
+    char default_filename[MAX_PART_LEN];
+    if (mode == 1)
+        strcpy(default_filename, "./random_arr.csv");
+    else if (mode == 2)
+        strcpy(default_filename, "./sort_arr.csv");
+    else
+        strcpy(default_filename, "./reverse_sort_arr.csv");
+
+    int a[MAX_SIZE] = {1, 2, -3, 4, -5};
+    my_sort_test(a, 5, sizeof(int), compare);
+    for (size_t i = 0; i < 5; i++)
+    {
+        printf("%d\n", a[i]);
+    }
+
     FILE *file = fopen(default_filename, "w");
     fprintf(file, "size;qsort;mysort\n");
     if (file == NULL)
@@ -68,11 +84,11 @@ int run_profiling(void)
 
     struct timespec start_time, end_time;
     double cpu_time_qsort, cpu_time_my_sort, time;
-    size_t size_cur = 250, itteration_count = 0;
+    size_t size_cur = 1, itteration_count = 0;
     int number_arr[MAX_SIZE];
     double time_array[MAX_ITERATIONS], rse = 100;
 
-    while (size_cur < MAX_SIZE)
+    while (size_cur <= MAX_SIZE)
     {
         itteration_count = 0;
         rse = 100;
@@ -101,7 +117,7 @@ int run_profiling(void)
             generate_array(number_arr, size_cur);
 
             clock_gettime(CLOCK_REALTIME, &start_time);
-            my_sort(&number_arr, size_cur, sizeof(int), compare);
+            my_sort_test(&number_arr, size_cur, sizeof(int), compare);
             clock_gettime(CLOCK_REALTIME, &end_time);
 
             time = (double)((end_time.tv_sec - start_time.tv_sec) * 1e9 + (end_time.tv_nsec - start_time.tv_nsec));
