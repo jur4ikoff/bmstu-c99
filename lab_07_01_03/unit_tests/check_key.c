@@ -1,129 +1,203 @@
 #include <stdlib.h>
-#include <check.h>
 #include "errors.h"
 #include "array_operations.h"
+#include "check_sort.h"
+#include "comparators.h"
 
+// Функция фильтр копирует в новый массив все до последнего отрицательного элемента
+// Позитивные тесты
 
-#define EPS 1.0e-7
-// Тестовая функция для проверки корректности работы функции key
-START_TEST(test_key_valid_case)
+/**
+ * @brief Позитивный тест. Тестирования фильтра, без отрицательных элементов
+ */
+START_TEST(pos_test_1)
 {
-    int source[] = {1, -2, 3, -4, 5};
-    int *filtered_arr = NULL;
-    int *pend_filtered_arr = NULL;
+    int arr[] = {1, 2, 3, 4, 5};
+    int *start_filter = NULL, *end_filter = NULL;
 
-    int result = key(source, source + 5, &filtered_arr, &pend_filtered_arr);
+    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    ck_assert_int_eq(rc, ERR_OK);
 
-    ck_assert_int_eq(result, ERR_OK);
-    ck_assert_int_eq(pend_filtered_arr - filtered_arr, 3); // Ожидаем 4 элемента в отфильтрованном массиве
-    ck_assert_int_eq(filtered_arr[0], 1);
-    ck_assert_int_eq(filtered_arr[1], -2);
-    ck_assert_int_eq(filtered_arr[2], 3);
-    // ck_assert_int_eq(filtered_arr[3], -4);
+    ck_assert(start_filter != NULL);
+    ck_assert(end_filter != NULL);
 
-    free(filtered_arr); // Не забываем освобождать память
+    ck_assert_int_eq(end_filter - start_filter, 5);
+    ck_assert_int_eq(*(start_filter + 0), 1);
+    ck_assert_int_eq(*(start_filter + 1), 2);
+    ck_assert_int_eq(*(start_filter + 2), 3);
+    ck_assert_int_eq(*(start_filter + 3), 4);
+    ck_assert_int_eq(*(start_filter + 4), 5);
+    free(start_filter);
 }
 END_TEST
 
-START_TEST(test_key_no_negative_elements)
+/**
+ * @brief Позитивный тест. Тестирования фильтра, отрицательный элемент последний
+ */
+START_TEST(pos_test_2)
 {
-    int source[] = {1, 2, 3, 4, 5};
-    int *filtered_arr = NULL;
-    int *pend_filtered_arr = NULL;
+    int arr[] = {1, 2, 3, 4, -5};
+    int *start_filter = NULL, *end_filter = NULL;
 
-    int result = key(source, source + 5, &filtered_arr, &pend_filtered_arr);
+    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    ck_assert_int_eq(rc, ERR_OK);
 
-    ck_assert_int_eq(result, ERR_OK);
-    ck_assert_int_eq(pend_filtered_arr - filtered_arr, 6); // Все элементы должны остаться
-    ck_assert_int_eq(filtered_arr[0], 1);
-    ck_assert_int_eq(filtered_arr[1], 2);
-    ck_assert_int_eq(filtered_arr[2], 3);
-    ck_assert_int_eq(filtered_arr[3], 4);
-    ck_assert_int_eq(filtered_arr[4], 5);
+    ck_assert(start_filter != NULL);
+    ck_assert(end_filter != NULL);
 
-    free(filtered_arr);
+    ck_assert_int_eq(end_filter - start_filter, 4);
+    ck_assert_int_eq(*(start_filter + 0), 1);
+    ck_assert_int_eq(*(start_filter + 1), 2);
+    ck_assert_int_eq(*(start_filter + 2), 3);
+    ck_assert_int_eq(*(start_filter + 3), 4);
+    free(start_filter);
 }
 END_TEST
 
-START_TEST(test_key_empty_array)
+/**
+ * @brief Позитивный тест. отрицательный элемент в середине
+ */
+START_TEST(pos_test_3)
 {
-    int source[] = {0};
-    int *filtered_arr = NULL;
-    int *pend_filtered_arr = NULL;
+    int arr[] = {1, 2, 3, -4, 5};
+    int *start_filter = NULL, *end_filter = NULL;
 
-    int result = key(source, source, &filtered_arr, &pend_filtered_arr);
+    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    ck_assert_int_eq(rc, ERR_OK);
 
-    ck_assert_int_eq(result, ERR_POINTER);
-    // ck_assert_ptr_eq(filtered_arr, pend_filtered_arr); // Пустой массив, указатели равны
+    ck_assert(start_filter != NULL);
+    ck_assert(end_filter != NULL);
 
-    free(filtered_arr);
+    ck_assert_int_eq(end_filter - start_filter, 3);
+    ck_assert_int_eq(*(start_filter + 0), 1);
+    ck_assert_int_eq(*(start_filter + 1), 2);
+    ck_assert_int_eq(*(start_filter + 2), 3);
+    free(start_filter);
 }
 END_TEST
 
-START_TEST(test_key_null_pointer)
+/**
+ * @brief Позитивный тест. отрицательный элемент - второй
+ */
+START_TEST(pos_test_4)
 {
-    int *filtered_arr = NULL;
-    int *pend_filtered_arr = NULL;
+    int arr[] = {1, -2, 3, 4, 5};
+    int *start_filter = NULL, *end_filter = NULL;
 
-    int result = key(NULL, NULL, &filtered_arr, &pend_filtered_arr);
+    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    ck_assert_int_eq(rc, ERR_OK);
 
-    ck_assert_int_eq(result, ERR_POINTER); // Ожидаем ошибку с указателями
+    ck_assert(start_filter != NULL);
+    ck_assert(end_filter != NULL);
+
+    ck_assert_int_eq(end_filter - start_filter, 1);
+    ck_assert_int_eq(*(start_filter + 0), 1);
+    free(start_filter);
 }
 END_TEST
 
-START_TEST(test_key_allocation_failure)
+/**
+ * @brief Позитивный тест. Несколько отрицательных тестов
+ */
+START_TEST(pos_test_5)
 {
-    // Это тестовый случай, который должен проверять утечку памяти или ошибку выделения.
-    // Мы не можем точно имитировать ошибку malloc без переписывания функции,
-    // поэтому здесь просто покажем структуру теста.
+    int arr[] = {1, -2, 3, 4, -5};
+    int *start_filter = NULL, *end_filter = NULL;
 
-    // В реальной системе можно использовать mtrace или другие методы для отслеживания утечек
+    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    ck_assert_int_eq(rc, ERR_OK);
 
-    int *filtered_arr = NULL;
-    int *pend_filtered_arr = NULL;
+    ck_assert(start_filter != NULL);
+    ck_assert(end_filter != NULL);
 
-    // Здесь нужно создать ситуацию, когда вызов malloc вернет NULL
-    // Например, можно сделать это через мокирование, если возможно, или использовать другой подход.
-
-    // Предполагаем, что ошибка произошла
-    int result = key(NULL, NULL, &filtered_arr, &pend_filtered_arr); // Аналогично предыдущему тесту
-
-    ck_assert_int_eq(result, ERR_POINTER); // Ожидаем ошибку с указателями
+    ck_assert_int_eq(end_filter - start_filter, 4);
+    ck_assert_int_eq(*(start_filter + 0), 1);
+    ck_assert_int_eq(*(start_filter + 1), -2);
+    ck_assert_int_eq(*(start_filter + 2), 3);
+    ck_assert_int_eq(*(start_filter + 3), 4);
+    free(start_filter);
 }
 END_TEST
 
-Suite *key_suite(void)
+/**
+ * @brief Позитивный тест. Все элементы отрицательные
+ */
+START_TEST(pos_test_6)
 {
-    Suite *s;
-    TCase *tc_core;
+    int arr[] = {-1, -2, -3, -4, -5};
+    int *start_filter = NULL, *end_filter = NULL;
 
-    s = suite_create("KeyFunction");
-    tc_core = tcase_create("Core");
+    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    ck_assert_int_eq(rc, ERR_OK);
 
-    tcase_add_test(tc_core, test_key_valid_case);
-    tcase_add_test(tc_core, test_key_no_negative_elements);
-    tcase_add_test(tc_core, test_key_empty_array);
-    tcase_add_test(tc_core, test_key_null_pointer);
-    tcase_add_test(tc_core, test_key_allocation_failure);
+    ck_assert(start_filter != NULL);
+    ck_assert(end_filter != NULL);
 
-    suite_add_tcase(s, tc_core);
-
-    return s;
+    ck_assert_int_eq(end_filter - start_filter, 4);
+    ck_assert_int_eq(*(start_filter + 0), -1);
+    ck_assert_int_eq(*(start_filter + 1), -2);
+    ck_assert_int_eq(*(start_filter + 2), -3);
+    ck_assert_int_eq(*(start_filter + 3), -4);
+    free(start_filter);
 }
+END_TEST
 
-int main(void)
+// НЕГАТИВНЫЙ ТЕСТ
+/**
+ * @brief Негативный тест. только первый элемент отрицательный
+ */
+START_TEST(neg_test_1)
 {
-    int number_failed;
-    Suite *s;
-    SRunner *sr;
+    int arr[] = {-1, 2, 3, 4};
+    int *start_filter = NULL, *end_filter = NULL;
 
-    s = key_suite();
-    sr = srunner_create(s);
+    int rc = key(arr, arr + 4, &start_filter, &end_filter);
+    ck_assert_int_eq(rc, ERR_EMPTY_OUTPUT);
+}
+END_TEST
 
-    srunner_run_all(sr, CK_NORMAL);
-    number_failed = srunner_ntests_failed(sr);
+/**
+ * @brief Негативный тест. Неверный указатель на массив
+ */
+START_TEST(neg_test_2)
+{
+    int *arr = NULL;
+    int *start_filter = NULL, *end_filter = NULL;
 
-    srunner_free(sr);
+    int rc = key(arr, arr + 4, &start_filter, &end_filter);
+    ck_assert_int_eq(rc, ERR_POINTER);
+}
+END_TEST
 
-    return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
+/**
+ * @brief Негативный тест. Указатель на начало больше указателя на конец
+ */
+START_TEST(neg_test_3)
+{
+    int arr[] = {-1, 2, 3, 4};
+    int *start_filter = NULL, *end_filter = NULL;
+
+    int rc = key(arr + 4, arr, &start_filter, &end_filter);
+    ck_assert_int_eq(rc, ERR_POINTER);
+}
+END_TEST
+
+Suite *get_key_suite(void)
+{
+    Suite *suite = suite_create("Key tests");
+    TCase *tc = tcase_create("Key");
+
+    tcase_add_test(tc, pos_test_1);
+    tcase_add_test(tc, pos_test_2);
+    tcase_add_test(tc, pos_test_3);
+    tcase_add_test(tc, pos_test_4);
+    tcase_add_test(tc, pos_test_5);
+    tcase_add_test(tc, pos_test_6);
+
+    tcase_add_test(tc, neg_test_1);
+    tcase_add_test(tc, neg_test_2);
+    tcase_add_test(tc, neg_test_3);
+
+    suite_add_tcase(suite, tc);
+    return suite;
 }

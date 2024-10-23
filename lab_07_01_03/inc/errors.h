@@ -10,6 +10,7 @@
 // #define ERR_WRITE 5
 #define ERR_POINTER 6
 #define ERR_LONG_ARRAY 7
+#define ERR_EMPTY_OUTPUT 8
 
 void print_err_msg(int arg);
 #endif

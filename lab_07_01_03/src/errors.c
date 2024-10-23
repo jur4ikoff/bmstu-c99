@@ -2,6 +2,7 @@
 #include <stdio.h>
 #define OUT 1
 
+// Функция для вывода ошибок на экран
 void print_err_msg(int arg)
 {
 #if OUT
@@ -19,6 +20,8 @@ void print_err_msg(int arg)
         printf("Ошибка при передачи параметров\n");
     else if (arg == ERR_LONG_ARRAY)
         printf("Ошибка, массив переполнен\n");
+    else if (arg == ERR_EMPTY_OUTPUT)
+        printf("Ошибка, пустой вывод\n");
 #else
     (void)arg;
 #endif

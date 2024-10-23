@@ -4,6 +4,7 @@ OUT_DIR := ./out
 INC_DIR := ./inc
 UNIT_DIR := ./unit_tests
 
+
 # Задаю имена будущим исполняемым файлам
 EXE_NAME := app.exe
 EXE_UNIT := unit_tests.exe
@@ -12,37 +13,37 @@ EXE_UNIT := unit_tests.exe
 CC := gcc # Выбор компилятора
 
 # gnu99 Для time.h
-CFLAGS := -std=gnu99 -I $(INC_DIR)/ -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra # Флаги компиляции по умоланию
+CFLAGS := -std=c99 -I $(INC_DIR)/ -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra # Флаги компиляции по умоланию
 LDFLAGS := -lm # Флаг линковки по умолчанию
 
 # Исходные файлы и объектные файлы
 src_files := $(wildcard $(SRC_DIR)/*.c)
-APP_OBJ := $(patsubst $(SRC_DIR)/%.c, $(OUT_DIR)/%.o, $(filter-out $(SRC_DIR)/main.c, $(src_files)))
+app_objs := $(patsubst $(SRC_DIR)/%.c, $(OUT_DIR)/%.o, $(filter-out $(SRC_DIR)/main.c, $(src_files)))
 
 # Файлы с тестами и объектные файлы тестов
 test_srs_files := $(wildcard $(UNIT_DIR)/*.c)
-TEST_OBJ := $(patsubst $(UNIT_DIR)/%.c, $(OUT_DIR)/%.o, $(test_srs_files))
+test_objs := $(patsubst $(UNIT_DIR)/%.c, $(OUT_DIR)/%.o, $(test_srs_files))
 
 # Файл с main() для тестов
-SOURSE_MAIN := $(OUT_DIR)/main.o
+main := $(OUT_DIR)/main.o
 
 
-$(EXE_NAME): $(APP_OBJ) $(SOURSE_MAIN)
-	$(CC) $(APP_OBJ) $(SOURSE_MAIN) $(LDFLAGS) -o $@ 
+$(EXE_NAME): $(app_objs) $(main)
+	$(CC) $(app_objs) $(main) $(LDFLAGS) -o $@ 
 
 # Сборка тестов
-$(EXE_UNIT): $(TEST_OBJ) $(APP_OBJ)
-	$(CC) $(TEST_OBJ) $(APP_OBJ) -o $@  $(LDFLAGS) 
+$(EXE_UNIT): $(test_objs) $(app_objs)
+	$(CC) $(test_objs) $(app_objs) -o $@ -lcheck $(LDFLAGS)
 
-# Компиляция основных файлов с флагами покрытия
+# Компиляция основных файлов
 $(OUT_DIR)/%.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS)  -c $< -o  $@
 
-# Компиляция тестов с флагами покрытия
+# Компиляция тестов файлов
 $(OUT_DIR)/%.o: $(UNIT_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Компиляция check_main.c (тестовый main) с покрытием
+# Компиляция check_main.c покрытием
 $(CHECK_MAIN): $(UNIT_DIR)/check_main.c
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
@@ -51,7 +52,7 @@ $(SOURSE_MAIN): $(SRC_DIR)/main.c
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
 # Обозначение фиктивных целей
-.PHONY : clean release debug asan msan ubsan coverage func unit myunit
+.PHONY : clean release debug asan msan ubsan coverage func unit myunit macunit
 
 # Цель очистки
 clean:
@@ -92,6 +93,16 @@ coverage: $(EXE_NAME)
 func : $(EXE_NAME)
 	./func_tests/scripts/func_tests.sh
 
-unit: LDFLAGS += -lcheck -lrt -lsubunit -lm
+
 unit: unit_tests.exe
+	./unit_tests.exe
+
+myunit: LDFLAGS += -lrt -lsubunit
+myunit: CFLAGS += -g
+myunit: unit_tests.exe
+	./unit_tests.exe
+
+macunit: LDFLAGS += -L/opt/homebrew/Cellar/check/0.15.2/lib
+macunit: CFLAGS += -Wno-gnu-zero-variadic-macro-arguments -I/opt/homebrew/Cellar/check/0.15.2/include
+macunit: unit_tests.exe
 	./unit_tests.exe

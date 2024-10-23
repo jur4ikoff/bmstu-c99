@@ -23,7 +23,7 @@ fi
 # Определяем путь к скрипту
 path_to_script=$(dirname "$(readlink -f "$0") || true")
 # Задаем команду валгринда
-valgrind_command="valgrind --leak-check=yes --quiet"
+valgrind_command="valgrind --leak-check=full --quiet --show-leak-kinds=all"
 # Определяем файл логирования для валгринда
 logfile="${path_to_script}/log.txt"
 
@@ -52,8 +52,8 @@ for file in $files; do
         path_to_args="${path_to_script}"/../data/pos_"$number"_args.txt
 
         # Запускаем pos_case и проверяем exit_code
-        # "${path_to_script}"/pos_case.sh "${file}" "$path_to_args" "${output_file}" 
-        "${path_to_script}"/pos_case.sh "$path_to_args" "$output_file" 
+        # "${path_to_script}"/pos_case.sh "${file}" "$path_to_args" "${output_file}"
+        "${path_to_script}"/pos_case.sh "$path_to_args" "$output_file"
         res=$?
 
         # Определяем команду запуска для приложения
@@ -87,6 +87,13 @@ for file in $files; do
                 fi
             fi
         else
+            if [[ "$verbose_flag" == 1 ]]; then
+                if [[ "$valgrind_flag" == 1 ]]; then
+                    echo -e "pos_case_$number ${GREEN}PASSED${RESET_COLOR}  memory ${GREEN}PASS${RESET_COLOR}"
+                else
+                    echo -e "pos_case_$number ${GREEN}PASSED${RESET_COLOR}"
+                fi
+            fi
             # Увеличиваем счеткич прошедших тестов
             ((pos_count_passed++))
         fi
@@ -100,7 +107,7 @@ for file in $files; do
         # Получаем путь до аргументов
         path_to_args="${path_to_script}"/../data/neg_"$number"_args.txt
         # Запуск neg_case.sh
-        "$path_to_script"/neg_case.sh "$file" "$path_to_args"
+        "$path_to_script"/neg_case.sh "$path_to_args"
         res=$? # Получение результата
 
         # Составление команды запуска
@@ -119,21 +126,36 @@ for file in $files; do
                 exit 2
             fi
         fi
-
+        
         # Обработка результатов
-        if [[ "$res" != 0 ]]; then
+        if [[ "$res" == 0 ]]; then
             # Увеличиваем счетчик проваленных тестов
-            ((fail_count++))
+            ((neg_count_passed++))
             # Вывод если verbose true
             if [[ "$verbose_flag" == 1 ]]; then
                 if [[ "$valgrind_flag" == 1 ]]; then
-                    echo -e "neg_case_$number ${RED}FAILED${RESET_COLOR}  memory ${GREEN}PASS${RESET_COLOR}"
+                    echo -e "neg_case_$number ${GREEN}PASSED${RESET_COLOR}  memory ${GREEN}PASS${RESET_COLOR}"
                 else
-                    echo -e "neg_case_$number ${RED}FAILED${RESET_COLOR}"
+                    echo -e "neg_case_$number ${GREEN}PASSED${RESET_COLOR}"
                 fi
             else
+                if [[ "$valgrind_flag" == 1 ]]; then
+                    echo -e "neg_case_$number ${GREEN}PASSED${RESET_COLOR}  memory ${GREEN}PASS${RESET_COLOR}"
+                fi
                 # Увеличиваем счетчик прошедних негативных тестов
-                ((neg_count_passed++))
+            fi
+        else
+            ((fail_count++))
+            if [[ "$verbose_flag" == 1 ]]; then
+                if [[ "$valgrind_flag" == 1 ]]; then
+                    echo -e "neg_case_$number ${RED}FAIL${RESET_COLOR}  memory ${GREEN}PASS${RESET_COLOR}"
+                else
+                    echo -e "neg_case_$number ${RED}FAIL${RESET_COLOR}"
+                fi
+            else
+                if [[ "$valgrind_flag" == 1 ]]; then
+                    echo -e "neg_case_$number ${RED}FAIL${RESET_COLOR}  memory ${GREEN}PASS${RESET_COLOR}"
+                fi
             fi
         fi
     fi

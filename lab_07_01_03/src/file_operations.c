@@ -3,7 +3,13 @@
 #include "errors.h"
 #include "constants.h"
 
-int file_read_int(char *filename, size_t *size)
+/**
+ * @brief  Функция считает количество элементов в файле
+ * @param filename Путь к файлу
+ * @param size Указатель на количество элементов
+ * @return Код ошибки
+ * */
+int file_elements_count(char *filename, size_t *size)
 {
     *size = 0;
     FILE *file = fopen(filename, "r");
@@ -24,21 +30,28 @@ int file_read_int(char *filename, size_t *size)
 }
 
 /**
- *
+ * @brief Фцнкция записывает массив целых чисел в файл
+ * @param filename Путь до файла
+ * @param start Указатель на первый элемент массива
+ * @param end Указатель на последний элемент массива 
  */
-int file_write_int(char *filename, int *begin_arr, int *end_arr)
+int file_write_int(char *filename, int *start, int *end)
 {
+    // Проверки
     FILE *file = fopen(filename, "w");
     if (file == NULL)
         return ERR_FILENAME;
 
-    while (begin_arr < end_arr)
+    if (start == NULL)
+        return ERR_ALLOCATION;
+
+    // Запись
+    for (int *cur = start; cur < end; cur++)
     {
-        if (begin_arr + 1 < end_arr)
-            fprintf(file, "%d ", *begin_arr);
+        if (cur + 1 < end)
+            fprintf(file, "%d ", *cur);
         else
-            fprintf(file, "%d\n", *begin_arr);
-        begin_arr++;
+            fprintf(file, "%d\n", *cur);
     }
 
     fclose(file);
