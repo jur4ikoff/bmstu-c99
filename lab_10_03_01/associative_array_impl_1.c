@@ -10,7 +10,7 @@
 */
 
 // Размер по умолчанию
-#define CAPACITY_INIT 2
+#define CAPACITY_INIT 20
 
 typedef struct data_t_
 {

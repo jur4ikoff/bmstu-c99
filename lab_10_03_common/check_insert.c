@@ -15,7 +15,7 @@ START_TEST(test_clear_empty_arr)
     rc = assoc_array_find(arr, "test", &el_1);
     ck_assert_int_eq(rc, ASSOC_ARRAY_OK);
     rc = 1;
-    if (*el_1 == 1)
+    if (el_1 && *el_1 == 1)
         rc = ASSOC_ARRAY_OK;
     ck_assert_int_eq(rc, ASSOC_ARRAY_OK);
     assoc_array_clear(arr);
@@ -37,7 +37,7 @@ START_TEST(test_insert_1_el_arr)
     rc = assoc_array_find(arr, "test_1", &el);
     ck_assert_int_eq(rc, ASSOC_ARRAY_OK);
     rc = 1;
-    if (*el == 2)
+    if (el && *el == 2)
         rc = ASSOC_ARRAY_OK;
     ck_assert_int_eq(rc, ASSOC_ARRAY_OK);
     assoc_array_clear(arr);
@@ -60,7 +60,7 @@ START_TEST(test_insert_few_el_arr)
     rc = assoc_array_find(arr, "test_2", &el);
     ck_assert_int_eq(rc, ASSOC_ARRAY_OK);
     rc = 1;
-    if (*el == 3)
+    if (el && *el == 3)
         rc = ASSOC_ARRAY_OK;
     ck_assert_int_eq(rc, ASSOC_ARRAY_OK);
     assoc_array_clear(arr);
