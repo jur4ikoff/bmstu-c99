@@ -172,7 +172,7 @@ assoc_array_error_t assoc_array_remove(assoc_array_t arr, const char *key)
 {
     if (!key || strlen(key) < 1 || arr == NULL)
         return ASSOC_ARRAY_INVALID_PARAM;
-    
+
     if (arr->size == 0)
         return ASSOC_ARRAY_NOT_FOUND;
 
