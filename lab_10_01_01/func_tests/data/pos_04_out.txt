@@ -1,0 +1,12 @@
+Nissan Altima
+2017
+4000
+Ford Focus
+2014
+6000
+Honda Civic
+2018
+6000
+Volkswagen Golf  
+2019
+8000

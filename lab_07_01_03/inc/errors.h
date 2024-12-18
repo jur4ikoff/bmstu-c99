@@ -1,6 +1,7 @@
 #ifndef ERRORS_H_
 #define ERRORS_H_
 
+#define ERR_NOT_EQ -1
 #define ERR_OK 0
 #define ERR_ARGS 1
 #define ERR_FILENAME 2

@@ -1,0 +1,9 @@
+Banana
+100
+1000
+Apple
+1000
+1000
+Americano
+900
+1000

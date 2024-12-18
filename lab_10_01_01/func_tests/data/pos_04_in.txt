@@ -1,0 +1,30 @@
+bmw m4
+2008
+12000
+bmw m5
+2012
+15000
+Opel Astra
+2012
+202020
+Audi A4  
+2015
+10000
+Mercedes-Benz С-Class
+2016
+10000
+Volkswagen Golf  
+2019
+8000
+Ford Focus
+2014
+6000
+Honda Civic
+2018
+6000
+Toyota Camry
+2020
+9000
+Nissan Altima
+2017
+4000

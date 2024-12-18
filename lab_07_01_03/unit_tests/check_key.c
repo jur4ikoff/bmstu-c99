@@ -2,7 +2,6 @@
 #include "errors.h"
 #include "array_operations.h"
 #include "check_sort.h"
-#include "comparators.h"
 
 // Функция фильтр копирует в новый массив все до последнего отрицательного элемента
 // Позитивные тесты

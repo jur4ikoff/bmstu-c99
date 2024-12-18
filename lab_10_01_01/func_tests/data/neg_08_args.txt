@@ -1,0 +1,1 @@
+T ./func_tests/data/neg_08_in.txt ./func_tests/data/output.txt 20200 7000

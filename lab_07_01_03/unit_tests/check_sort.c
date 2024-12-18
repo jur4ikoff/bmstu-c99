@@ -3,6 +3,29 @@
 #include "errors.h"
 #include "array_operations.h"
 
+// Функция компаратор для двух вещественных чисел
+static int double_compare(const void *a, const void *b)
+{
+    return (int)(*(double *)a - *(double *)b);
+}
+
+// Функция компаратор чаров
+static int char_compare(const void *a, const void *b)
+{
+    return *(char *)a - *(char *)b;
+}
+
+// Функция компаратор для массива чисел
+static int int_arr_compare(int first_arr[], int second_arr[], size_t count)
+{
+    for (size_t i = 0; i < count; i++)
+    {
+        if (first_arr[i] != second_arr[i])
+            return ERR_NOT_EQ;
+    }
+    return ERR_OK;
+}
+
 #define EPS 10e-6
 
 typedef struct

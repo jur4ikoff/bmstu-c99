@@ -7,7 +7,6 @@
 #include <string.h>
 #include "file_operations.h"
 #include "array_operations.h"
-#include "comparators.h"
 // Сортировка 5 вариант, фильтр - 3
 
 int main(int argc, char **argv)
