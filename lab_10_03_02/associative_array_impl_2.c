@@ -20,11 +20,10 @@ typedef struct data_t_
 
 struct assoc_array_type
 {
-    size_t size;
-    size_t capacity;
-
-    // Массив для хранения пар ключ-значение
+    // Указатель на данные для хранения пар ключ-значение
     data_t *data;
+    // Следующий элемент
+    data_t *next;
 };
 
 /**
@@ -38,8 +37,6 @@ assoc_array_t assoc_array_create(void)
     if (!arr)
         return NULL;
 
-    arr->size = 0;
-    arr->capacity = CAPACITY_INIT;
     arr->data = malloc(sizeof(data_t) * arr->capacity);
     if (!arr->data)
     {

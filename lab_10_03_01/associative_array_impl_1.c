@@ -10,7 +10,7 @@
 */
 
 // Размер по умолчанию
-#define CAPACITY_INIT 10
+#define CAPACITY_INIT 2
 
 typedef struct data_t_
 {
@@ -34,7 +34,7 @@ struct assoc_array_type
  */
 assoc_array_t assoc_array_create(void)
 {
-    assoc_array_t arr = malloc(sizeof(assoc_array_t) * CAPACITY_INIT);
+    assoc_array_t arr = malloc(sizeof(*arr));
     if (!arr)
         return NULL;
 
