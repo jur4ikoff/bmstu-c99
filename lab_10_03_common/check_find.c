@@ -155,19 +155,17 @@ START_TEST(test_find_err_arr_pointer)
 
 END_TEST
 
-
 // Неверный указатель на элемент
 START_TEST(test_find_err_num_pointer)
 {
     assoc_array_t arr = assoc_array_create();
     int rc = assoc_array_find(NULL, "test_4", 0);
     ck_assert_int_eq(rc, ASSOC_ARRAY_INVALID_PARAM);
-    
+
     assoc_array_destroy(&arr);
 }
 
 END_TEST
-
 
 Suite *get_find_suite(void)
 {

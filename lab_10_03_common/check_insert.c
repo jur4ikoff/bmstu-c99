@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 // Добавление в пустой массив
-START_TEST(test_clear_empty_arr)
+START_TEST(test_insert_empty_arr)
 {
     assoc_array_t arr = assoc_array_create();
     int rc = ASSOC_ARRAY_OK;
@@ -105,7 +105,7 @@ Suite *get_insert_suite(void)
     Suite *suite = suite_create("Insert Suite");
     TCase *tcase = tcase_create("insert test");
 
-    tcase_add_test(tcase, test_clear_empty_arr);
+    tcase_add_test(tcase, test_insert_empty_arr);
     tcase_add_test(tcase, test_insert_1_el_arr);
     tcase_add_test(tcase, test_insert_few_el_arr);
     tcase_add_test(tcase, test_insert_err_pointer_arr);

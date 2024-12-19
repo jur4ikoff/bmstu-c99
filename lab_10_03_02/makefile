@@ -107,6 +107,6 @@ macunit: unit_tests.exe
 	./unit_tests.exe
 
 dockerunit: LDFLAGS += -lcheck_pic -lrt -lsubunit 
-dockerunit: CFLAGS += -pthread
+dockerunit: CFLAGS += -pthread  -g
 dockerunit: unit_tests.exe
 	./unit_tests.exe

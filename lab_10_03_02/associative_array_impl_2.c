@@ -33,7 +33,7 @@ struct assoc_array_type
  */
 assoc_array_t assoc_array_create(void)
 {
-    assoc_array_t arr = malloc(sizeof(assoc_array_t));
+    assoc_array_t arr = malloc(sizeof(*arr));
     if (!arr)
         return NULL;
 
@@ -57,8 +57,15 @@ assoc_array_t assoc_array_create(void)
  */
 void assoc_array_destroy(assoc_array_t *arr)
 {
-    free((*arr)->data);
-    free(*arr);
+    assoc_array_t cur = *arr;
+    while (cur)
+    {
+        assoc_array_t next = cur->next;
+        free((cur)->data);
+        free(cur);
+
+        cur = next;
+    }
     *arr = NULL;
 }
 
@@ -75,33 +82,33 @@ void assoc_array_destroy(assoc_array_t *arr)
  */
 assoc_array_error_t assoc_array_insert(assoc_array_t arr, const char *key, int num)
 {
-    return ASSOC_ARRAY_OK;
-    /*if (arr == NULL || strlen(key) < 1)
+    if (arr == NULL || strlen(key) < 1)
         return ASSOC_ARRAY_INVALID_PARAM;
-
     int *el = NULL;
     if (assoc_array_find(arr, key, &el) == ASSOC_ARRAY_OK)
         return ASSOC_ARRAY_KEY_EXISTS;
     (void)el;
 
-    data_t data = { 0 };
-    data.key = strdup(key);
-    data.value = num;
+    data_t *data = NULL;
+    data = malloc(sizeof(data_t));
+    if (data == NULL)
+        return ASSOC_ARRAY_MEM;
+    data->key = strdup(key);
+    data->value = num;
 
-    if (arr->size < arr->capacity)
-        arr->data[arr->size] = data;
-    else
+    assoc_array_t cur = arr;
+    while (cur->next)
     {
-        arr->capacity *= 2;
-        data_t *res = realloc(arr->data, sizeof(data_t) * arr->capacity);
-        if (!res)
-            return ASSOC_ARRAY_MEM;
-
-        arr->data = res;
-        arr->data[arr->size] = data;
+        cur = cur->next;
     }
-    arr->size++;
-    return ASSOC_ARRAY_OK;*/
+    assoc_array_t new = malloc(sizeof(*new));
+    if (new == NULL)
+        return ASSOC_ARRAY_MEM;
+    new->data = data;
+    new->next = NULL;
+
+    cur->next = new;
+    return ASSOC_ARRAY_OK;
 }
 
 /**
@@ -139,16 +146,34 @@ void assoc_array_print(assoc_array_t arr)
  */
 assoc_array_error_t assoc_array_find(const assoc_array_t arr, const char *key, int **num)
 {
-    if (strlen(key) < 1 || arr == NULL || num == NULL)
+    /*
+    const assoc_array_t current = arr; // Начинаем с первого элемента
+
+    while (current != NULL) {
+        if (current->data != NULL && strcmp(current->data->key, key) == 0) {
+            *num = &current->data->value; // Возвращаем адрес значения
+            return ASSOC_ARRAY_SUCCESS; // Успех, ключ найден
+        }
+        // Переходим к следующему элементу
+        current = current->next;
+    }
+
+    return ASSOC_ARRAY_NOT_FOUND; // Ключ не найден
+}
+*/
+    if (strlen(key) < 1 || arr == NULL || num == NULL || key == NULL)
         return ASSOC_ARRAY_INVALID_PARAM;
 
     assoc_array_t cur = arr;
     while (cur != NULL)
     {
-        if (strcmp(cur->data->key, key) == 0)
+        if (cur->data)
         {
-            *num = &(cur->data->value);
-            return ASSOC_ARRAY_OK;
+            if (strcmp(cur->data->key, key) == 0)
+            {
+                *num = &(cur->data->value);
+                return ASSOC_ARRAY_OK;
+            }
         }
         cur = cur->next;
     }
