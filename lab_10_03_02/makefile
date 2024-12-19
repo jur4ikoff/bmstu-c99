@@ -63,7 +63,7 @@ release: $(EXE_UNIT)
 
 # Цель build debug
 debug: CFLAGS += -g3 -O0
-debug: $(EXE_UNIT)
+debug: $(EXE_NAME)
 
 # Цель build asan
 asan: CC = clang

@@ -37,13 +37,7 @@ assoc_array_t assoc_array_create(void)
     if (!arr)
         return NULL;
 
-    arr->data = malloc(sizeof(data_t));
-    if (!arr->data)
-    {
-        free(arr);
-        return NULL;
-    }
-
+    arr->data = NULL;
     return arr;
 }
 
@@ -167,7 +161,7 @@ assoc_array_error_t assoc_array_find(const assoc_array_t arr, const char *key, i
     assoc_array_t cur = arr;
     while (cur != NULL)
     {
-        if (cur->data)
+        if (cur->data && cur->data->key)
         {
             if (strcmp(cur->data->key, key) == 0)
             {
@@ -328,3 +322,25 @@ assoc_array_error_t assoc_array_max(const assoc_array_t arr, int **num)
 
     return ASSOC_ARRAY_OK;*/
 }
+
+/*
+int main(void)
+{
+    assoc_array_t arr = assoc_array_create();
+    int rc = ASSOC_ARRAY_OK;
+    rc = assoc_array_insert(arr, "test", 1);
+    if (rc != 0)
+        return rc;
+
+    int *el_1 = NULL;
+    rc = assoc_array_find(arr, "test", &el_1);
+
+    if (rc != 0)
+        return rc;
+    rc = 1;
+    if (el_1 && *el_1 == 1)
+        rc = ASSOC_ARRAY_OK;
+    assoc_array_clear(arr);
+    assoc_array_destroy(&arr);
+    return rc;
+}*/
