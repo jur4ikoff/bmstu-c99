@@ -38,6 +38,7 @@ assoc_array_t assoc_array_create(void)
         return NULL;
 
     arr->data = NULL;
+    arr->next = NULL;
     return arr;
 }
 
