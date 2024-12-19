@@ -6,11 +6,8 @@
 #include <string.h>
 
 /*
-Реализация ассоциативного массива на динамическом массиве
+Реализация ассоциативного массива на связном списке
 */
-
-// Размер по умолчанию
-#define CAPACITY_INIT 10
 
 typedef struct data_t_
 {
@@ -18,12 +15,16 @@ typedef struct data_t_
     int value;
 } data_t;
 
+typedef struct node_type_
+{
+    data_t data;
+    struct node_type_ *next;
+} node_t;
+
 struct assoc_array_type
 {
     // Указатель на данные для хранения пар ключ-значение
-    data_t *data;
-    // Следующий элемент
-    assoc_array_t next;
+    node_t *head;
 };
 
 /**
@@ -37,9 +38,22 @@ assoc_array_t assoc_array_create(void)
     if (!arr)
         return NULL;
 
-    arr->data = NULL;
-    arr->next = NULL;
+    arr->head = NULL;
     return arr;
+}
+
+static void free_list(node_t *head)
+{
+    node_t *cur = head;
+    while (cur)
+    {
+        node_t *next = cur->next;
+        free(cur->data.key);
+        free(cur);
+
+        cur = next;
+    }
+    head = NULL;
 }
 
 /**
@@ -52,15 +66,9 @@ assoc_array_t assoc_array_create(void)
  */
 void assoc_array_destroy(assoc_array_t *arr)
 {
-    assoc_array_t cur = *arr;
-    while (cur)
-    {
-        assoc_array_t next = cur->next;
-        free((cur)->data);
-        free(cur);
 
-        cur = next;
-    }
+    free_list((*arr)->head);
+    free(*arr);
     *arr = NULL;
 }
 
@@ -84,25 +92,27 @@ assoc_array_error_t assoc_array_insert(assoc_array_t arr, const char *key, int n
         return ASSOC_ARRAY_KEY_EXISTS;
     (void)el;
 
-    data_t *data = NULL;
-    data = malloc(sizeof(data_t));
-    if (data == NULL)
-        return ASSOC_ARRAY_MEM;
-    data->key = strdup(key);
-    data->value = num;
+    data_t data = { 0 };
+    data.key = strdup(key);
+    data.value = num;
 
-    assoc_array_t cur = arr;
-    while (cur->next)
-    {
-        cur = cur->next;
-    }
-    assoc_array_t new = malloc(sizeof(*new));
+    node_t *new = malloc(sizeof(*new));
     if (new == NULL)
         return ASSOC_ARRAY_MEM;
     new->data = data;
     new->next = NULL;
-
-    cur->next = new;
+    
+    node_t *cur = arr->head;
+    if (cur == NULL)
+    {
+        arr->head = new;
+        return ASSOC_ARRAY_OK;
+    }
+    while (cur->next)
+    {
+        cur = cur->next;
+    }
+    cur->next = new;    
     return ASSOC_ARRAY_OK;
 }
 
@@ -122,9 +132,9 @@ void assoc_array_print(assoc_array_t arr)
     if (arr == NULL)
         return;
 
-    for (assoc_array_t cur = arr; cur != NULL; cur->next)
+    for (node_t *cur = arr->head; cur != NULL; cur->next)
     {
-        printf("%s -> %d\n", cur->data->key, cur->data->value);
+        printf("%s -> %d\n", cur->data.key, cur->data.value);
     }
 }
 
@@ -141,32 +151,17 @@ void assoc_array_print(assoc_array_t arr)
  */
 assoc_array_error_t assoc_array_find(const assoc_array_t arr, const char *key, int **num)
 {
-    /*
-    const assoc_array_t current = arr; // Начинаем с первого элемента
-
-    while (current != NULL) {
-        if (current->data != NULL && strcmp(current->data->key, key) == 0) {
-            *num = &current->data->value; // Возвращаем адрес значения
-            return ASSOC_ARRAY_SUCCESS; // Успех, ключ найден
-        }
-        // Переходим к следующему элементу
-        current = current->next;
-    }
-
-    return ASSOC_ARRAY_NOT_FOUND; // Ключ не найден
-}
-*/
     if (strlen(key) < 1 || arr == NULL || num == NULL || key == NULL)
         return ASSOC_ARRAY_INVALID_PARAM;
 
-    assoc_array_t cur = arr;
+    node_t *cur = arr->head;
     while (cur != NULL)
     {
-        if (cur->data && cur->data->key)
+        if (cur->data.key)
         {
-            if (strcmp(cur->data->key, key) == 0)
+            if (strcmp(cur->data.key, key) == 0)
             {
-                *num = &(cur->data->value);
+                *num = &(cur->data.value);
                 return ASSOC_ARRAY_OK;
             }
         }
