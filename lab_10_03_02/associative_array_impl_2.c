@@ -101,7 +101,7 @@ assoc_array_error_t assoc_array_insert(assoc_array_t arr, const char *key, int n
         return ASSOC_ARRAY_MEM;
     new->data = data;
     new->next = NULL;
-    
+
     node_t *cur = arr->head;
     if (cur == NULL)
     {
@@ -112,7 +112,7 @@ assoc_array_error_t assoc_array_insert(assoc_array_t arr, const char *key, int n
     {
         cur = cur->next;
     }
-    cur->next = new;    
+    cur->next = new;
     return ASSOC_ARRAY_OK;
 }
 
@@ -180,36 +180,36 @@ assoc_array_error_t assoc_array_find(const assoc_array_t arr, const char *key, i
  */
 assoc_array_error_t assoc_array_remove(assoc_array_t arr, const char *key)
 {
-    return ASSOC_ARRAY_OK;
-    /*if (!key || strlen(key) < 1 || arr == NULL)
+    if (arr == NULL || key == NULL || strlen(key) < 1)
         return ASSOC_ARRAY_INVALID_PARAM;
 
-    if (arr->size == 0)
+    node_t *cur = arr->head;
+    node_t *prev = NULL;
+    if (cur == NULL)
         return ASSOC_ARRAY_NOT_FOUND;
 
-    for (size_t i = 0; i < arr->size; i++)
+    while (cur)
     {
-        if (strcmp(arr->data[i].key, key) == 0)
+        if (strcmp(cur->data.key, key) == 0)
         {
-            // Освобождаем память под ключ, если он был выделен динамически
-            free(arr->data[i].key);
-            // Сдвигаем элементы массива влево
-            memmove(&arr->data[i], &arr->data[i + 1], sizeof(data_t) * (arr->size - i - 1));
-
-            // Уменьшаем размер массива
-            arr->size--;
-            // Уменьшаем размер массива вдвое, если он стал пустым
-            if (arr->size < arr->capacity / DECR_COEF)
-                arr->capacity /= INCR_COEF;
-            arr->data = realloc(arr->data, sizeof(data_t) * arr->capacity);
-            if (!arr->data)
-                return ASSOC_ARRAY_MEM;
-
+            if (prev == NULL)
+            {
+                arr->head = cur->next;
+                free(cur->data.key);
+                free(cur);
+            }
+            else
+            {
+                prev->next = cur->next;
+                free(cur->data.key);
+                free(cur);
+            }
             return ASSOC_ARRAY_OK;
         }
+        prev = cur;
+        cur = cur->next;
     }
-
-    return ASSOC_ARRAY_NOT_FOUND;*/
+    return ASSOC_ARRAY_NOT_FOUND;
 }
 
 /**
@@ -221,17 +221,22 @@ assoc_array_error_t assoc_array_remove(assoc_array_t arr, const char *key)
  */
 assoc_array_error_t assoc_array_clear(assoc_array_t arr)
 {
-    /*if (arr == NULL)
+    if (arr == NULL)
         return ASSOC_ARRAY_INVALID_PARAM;
 
     int rc = ASSOC_ARRAY_OK;
-    while (arr->size)
+    node_t *cur = arr->head;
+    node_t *next = NULL;
+    if (cur == NULL)
+        return ASSOC_ARRAY_OK;
+    while (cur)
     {
-        if ((rc = assoc_array_remove(arr, arr->data[0].key)) != ASSOC_ARRAY_OK)
+        next = cur->next;
+        if ((rc = assoc_array_remove(arr, cur->data.key)) != ASSOC_ARRAY_OK)
             return rc;
+        cur = next;
     }
-
-    return ASSOC_ARRAY_OK;*/
+    return ASSOC_ARRAY_OK;
 }
 
 /**
@@ -245,16 +250,16 @@ assoc_array_error_t assoc_array_clear(assoc_array_t arr)
  */
 assoc_array_error_t assoc_array_each(const assoc_array_t arr, void (*action)(const char *key, int *num, void *param), void *param)
 {
-    return ASSOC_ARRAY_OK;
-    /*if (arr == NULL || action == NULL)
+    if (arr == NULL || action == NULL)
         return ASSOC_ARRAY_INVALID_PARAM;
 
-    for (size_t i = 0; i < arr->size; i++)
+    node_t *cur = arr->head;
+    while (cur)
     {
-        action(arr->data[i].key, &arr->data[i].value, param);
+        action(cur->data.key, &(cur->data.value), param);
+        cur = cur->next;
     }
-
-    return ASSOC_ARRAY_OK;*/
+    return ASSOC_ARRAY_OK;
 }
 
 /**
@@ -267,25 +272,27 @@ assoc_array_error_t assoc_array_each(const assoc_array_t arr, void (*action)(con
  */
 assoc_array_error_t assoc_array_min(const assoc_array_t arr, int **num)
 {
-    return ASSOC_ARRAY_OK;
-    /*if (arr == NULL || num == NULL)
+    if (arr == NULL || num == NULL)
         return ASSOC_ARRAY_INVALID_PARAM;
 
-    if (arr->size == 0)
+    node_t *cur = arr->head;
+    if (cur == NULL)
         return ASSOC_ARRAY_NOT_FOUND;
 
-    char *min_key = arr->data[0].key;
-    *num = &arr->data[0].value;
-    for (size_t i = 1; i < arr->size; i++)
+    char *min_key = cur->data.key;
+    *num = &(cur->data.value);
+
+    while (cur)
     {
-        if (strcmp(arr->data[i].key, min_key) < 0)
+        if (strcmp(cur->data.key, min_key) < 0)
         {
-            min_key = arr->data[i].key;
-            *num = &arr->data[i].value;
+            min_key = cur->data.key;
+            *num = &(cur->data.value);
         }
+        cur = cur->next;
     }
 
-    return ASSOC_ARRAY_OK;*/
+    return ASSOC_ARRAY_OK;
 }
 
 /**
@@ -298,25 +305,27 @@ assoc_array_error_t assoc_array_min(const assoc_array_t arr, int **num)
  */
 assoc_array_error_t assoc_array_max(const assoc_array_t arr, int **num)
 {
-    return ASSOC_ARRAY_OK;
-    /*if (arr == NULL || num == NULL)
+    if (arr == NULL || num == NULL)
         return ASSOC_ARRAY_INVALID_PARAM;
 
-    if (arr->size == 0)
+    node_t *cur = arr->head;
+    if (cur == NULL)
         return ASSOC_ARRAY_NOT_FOUND;
 
-    char *min_key = arr->data[0].key;
-    *num = &arr->data[0].value;
-    for (size_t i = 1; i < arr->size; i++)
+    char *min_key = cur->data.key;
+    *num = &(cur->data.value);
+
+    while (cur)
     {
-        if (strcmp(arr->data[i].key, min_key) > 0)
+        if (strcmp(cur->data.key, min_key) > 0)
         {
-            min_key = arr->data[i].key;
-            *num = &arr->data[i].value;
+            min_key = cur->data.key;
+            *num = &(cur->data.value);
         }
+        cur = cur->next;
     }
 
-    return ASSOC_ARRAY_OK;*/
+    return ASSOC_ARRAY_OK;
 }
 
 /*
