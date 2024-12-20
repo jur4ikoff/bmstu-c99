@@ -7,23 +7,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-// 1 - Если пустой, иначе 0
-/*static int is_empty(const node_t *head)
-{
-    return head == NULL;
-}*/
-
 /**
  * @brief Функция для инициализации односвязного списка
  * @return Указатель на односвязный список
  */
-
 struct node_t_
 {
     void *data;
     struct node_t_ *next;
 };
 
+// Создать лист
 node_t *create_list(void)
 {
     node_t *head = malloc(sizeof(node_t));
@@ -111,6 +105,7 @@ node_t *find(node_t *head, const void *data, int (*comparator)(const void *, con
     return NULL;
 }
 
+// Добавление в лист
 int add_to_list(node_t **head, void *data)
 {
     if (!*head)
@@ -140,6 +135,7 @@ int add_to_list(node_t **head, void *data)
     return ERR_OK;
 }
 
+// Удаление из начала списка
 void *pop_front(node_t **head)
 {
     if (head == NULL || *head == NULL)
@@ -176,6 +172,7 @@ int copy(node_t *head, node_t **new_head)
     return ERR_OK;
 }
 
+// Сортировка вставками
 void sorted_insert(node_t **head, node_t *element, int (*comparator)(const void *, const void *))
 {
     if (element == NULL || comparator == NULL)
@@ -205,6 +202,7 @@ void sorted_insert(node_t **head, node_t *element, int (*comparator)(const void 
     element->next = cur;
 }
 
+// Создание ноды
 node_t *create_node(void *data)
 {
     node_t *node = malloc(sizeof(node_t));
@@ -219,6 +217,7 @@ node_t *create_node(void *data)
     return node;
 }
 
+// Сортировка списка
 node_t *sort(node_t *head, int (*comparator)(const void *, const void *))
 {
     if (comparator == NULL)

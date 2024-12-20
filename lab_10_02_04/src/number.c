@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdlib.h>
 
+// Конвертация строки в число
 int convert_string_to_int(char *string, long long *number)
 {
     int rc = ERR_OK;
@@ -63,6 +64,7 @@ static int *find_prime_numbers(long long n, size_t *count)
     return primes;
 }
 
+// Функция для создания структурной переменной типа data_t
 number_t *create_data(int prime, int exp)
 {
     number_t *number = malloc(sizeof(number_t));
@@ -75,6 +77,7 @@ number_t *create_data(int prime, int exp)
     return number;
 }
 
+// Конвертация в список
 int convert_to_list(node_t **head, long long number)
 {
     if (number < 0)
@@ -116,6 +119,7 @@ int convert_to_list(node_t **head, long long number)
     return rc;
 }
 
+// Вывод числа
 void print_number(void *data)
 {
     number_t *number = (number_t *)data;
@@ -125,6 +129,7 @@ void print_number(void *data)
         printf("1\n");
 }
 
+// Компаратор по целому числу
 int compare_by_prime(const void *l, const void *r)
 {
     number_t *a = (number_t *)l;
@@ -193,6 +198,7 @@ node_t *mult_number(const node_t *a, const node_t *b, comparator_t comparator)
     return result;
 }
 
+// Возвести лист в квадрат
 node_t *sqrt_list(node_t *head)
 {
     if (head == NULL)
@@ -210,6 +216,7 @@ node_t *sqrt_list(node_t *head)
     return new_head;
 }
 
+// Деление списка
 node_t *div_list(long long a, long long b)
 {
     if (b == 0)
