@@ -22,18 +22,14 @@ void print_array(int *start, int *end)
 }
 
 // Функция реализует копиравание массива
-int copy_array(int *start_src, int *end_src, int **start_dst, int **end_dst)
+int copy_array(int *start_src, int *end_src, int *start_dst, int **end_dst)
 {
     if (start_src == NULL || end_src == NULL)
         return ERR_POINTER;
     if (end_src <= start_src)
         return ERR_POINTER;
 
-    *start_dst = malloc((end_src - start_src) * sizeof(int));
-    if (*start_dst == NULL)
-        return ERR_ALLOCATION;
-
-    *end_dst = *start_dst;
+    *end_dst = start_dst;
     for (int *cur = start_src; cur < end_src; cur++)
     {
         **end_dst = *cur;
@@ -159,7 +155,6 @@ int key(const int *pbegin_source, const int *pend_source, int *pbegin_filter, in
     // Проверка на то что вывод не пустой
     if (index - pbegin_source < 1)
         return ERR_EMPTY_OUTPUT;
-
 
     int *end = pbegin_filter;
     // Заполняем новый массив элементами старого

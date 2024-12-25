@@ -79,19 +79,19 @@ int main(int argc, char **argv)
     if (p_last_neg - arr < 1)
         return ERR_EMPTY_OUTPUT;
 
-    // Выделение памяти под новый массив
-    start_filter_arr = malloc((p_last_neg - arr) * sizeof(int));
-    if (start_filter_arr == NULL)
-    {
-        free(arr);
-        free(start_filter_arr);
-        print_err_msg(ERR_ALLOCATION);
-        return ERR_ALLOCATION;
-    }
-
     // Если фильтр, то запускаем функцию фильтрации
-    if (is_filter) 
+    if (is_filter)
     {
+        // Выделение памяти под новый массив
+        start_filter_arr = malloc((p_last_neg - arr) * sizeof(int));
+        if (start_filter_arr == NULL)
+        {
+            free(arr);
+            free(start_filter_arr);
+            print_err_msg(ERR_ALLOCATION);
+            return ERR_ALLOCATION;
+        }
+
         if ((rc = key(arr, arr_end, start_filter_arr, &end_filter_arr)) != ERR_OK)
         {
             free(arr);
@@ -102,8 +102,17 @@ int main(int argc, char **argv)
     }
     else
     {
+        start_filter_arr = malloc((arr_end - arr) * sizeof(int));
+        if (start_filter_arr == NULL)
+        {
+            free(arr);
+            free(start_filter_arr);
+            print_err_msg(ERR_ALLOCATION);
+            return ERR_ALLOCATION;
+        }
+
         // Иначе просто копируем массив
-        if ((rc = copy_array(arr, arr_end, &start_filter_arr, &end_filter_arr)) != ERR_OK)
+        if ((rc = copy_array(arr, arr_end, start_filter_arr, &end_filter_arr)) != ERR_OK)
         {
             free(arr);
             free(start_filter_arr);
