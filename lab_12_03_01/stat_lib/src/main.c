@@ -1,12 +1,13 @@
 #define _CRT_SECURE_NO_WARNINGS
+#include "array_operations.h"
+#include "constants.h"
+#include "errors.h"
+#include "file_operations.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "errors.h"
-#include "constants.h"
-#include <stdbool.h>
 #include <string.h>
-#include "file_operations.h"
-#include "array_operations.h"
+
 // Сортировка 5 вариант, фильтр - 3
 
 int main(int argc, char **argv)
@@ -68,16 +69,33 @@ int main(int argc, char **argv)
     }
 
     // Инициализация указателя на конец массива и указателей на массивы после фильтрации
-    int *arr_end = arr + (int)size, *filter_arr = NULL, *end_filter_arr = NULL;
+    int *arr_end = arr + (int)size, *start_filter_arr = NULL, *end_filter_arr = NULL;
 
     // print_array(arr, arr_end);
-    // Если фильтр, то запускаем функцию фильтрации
-    if (is_filter)
+    // Поиск последнего отрицательного
+    const int *p_last_neg = find_last_neg_el(arr, arr_end);
+
+    // Проверка на то что вывод не пустой
+    if (p_last_neg - arr < 1)
+        return ERR_EMPTY_OUTPUT;
+
+    // Выделение памяти под новый массив
+    start_filter_arr = malloc((p_last_neg - arr) * sizeof(int));
+    if (start_filter_arr == NULL)
     {
-        if ((rc = key(arr, arr_end, &filter_arr, &end_filter_arr)) != ERR_OK)
+        free(arr);
+        free(start_filter_arr);
+        print_err_msg(ERR_ALLOCATION);
+        return ERR_ALLOCATION;
+    }
+
+    // Если фильтр, то запускаем функцию фильтрации
+    if (is_filter) 
+    {
+        if ((rc = key(arr, arr_end, start_filter_arr, &end_filter_arr)) != ERR_OK)
         {
             free(arr);
-            free(filter_arr);
+            free(start_filter_arr);
             print_err_msg(rc);
             return rc;
         }
@@ -85,41 +103,42 @@ int main(int argc, char **argv)
     else
     {
         // Иначе просто копируем массив
-        if ((rc = copy_array(arr, arr_end, &filter_arr, &end_filter_arr)) != ERR_OK)
+        if ((rc = copy_array(arr, arr_end, &start_filter_arr, &end_filter_arr)) != ERR_OK)
         {
             free(arr);
-            free(filter_arr);
+            free(start_filter_arr);
             print_err_msg(rc);
             return rc;
         }
     }
+
     // Сравниваем указатели на начало и конец
-    if (filter_arr == end_filter_arr)
+    if (start_filter_arr == end_filter_arr)
     {
         free(arr);
-        free(filter_arr);
+        free(start_filter_arr);
         print_err_msg(ERR_EMPTY_OUTPUT);
         return ERR_EMPTY_OUTPUT;
     }
-    
-    // СОРТИРОВКА 
+
+    // СОРТИРОВКА
     // print_array(filter_arr, end_filter_arr);
     // qsort(filter_arr, end_filter_arr - filter_arr, sizeof(int), compare);
-    mysort(filter_arr, end_filter_arr - filter_arr, sizeof(int), int_compare);
+    mysort(start_filter_arr, end_filter_arr - start_filter_arr, sizeof(int), int_compare);
     // print_array(filter_arr, end_filter_arr);
 
     // Запись измененного массива в файл вывода
-    if ((rc = file_write_int(file_output, filter_arr, end_filter_arr)) != ERR_OK)
+    if ((rc = file_write_int(file_output, start_filter_arr, end_filter_arr)) != ERR_OK)
     {
         free(arr);
-        free(filter_arr);
+        free(start_filter_arr);
         print_err_msg(rc);
         return rc;
     }
 
     // Освобождение памяти
     free(arr);
-    free(filter_arr);
+    free(start_filter_arr);
     // Вывод
     return rc;
 }

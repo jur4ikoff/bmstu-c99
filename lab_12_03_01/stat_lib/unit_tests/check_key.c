@@ -13,8 +13,9 @@ START_TEST(pos_test_1)
 {
     int arr[] = {1, 2, 3, 4, 5};
     int *start_filter = NULL, *end_filter = NULL;
+    start_filter = malloc(5 * sizeof(int));
 
-    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    int rc = key(arr, arr + 5, start_filter, &end_filter);
     ck_assert_int_eq(rc, ERR_OK);
 
     ck_assert(start_filter != NULL);
@@ -37,8 +38,9 @@ START_TEST(pos_test_2)
 {
     int arr[] = {1, 2, 3, 4, -5};
     int *start_filter = NULL, *end_filter = NULL;
+    start_filter = malloc(4 * sizeof(int));
 
-    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    int rc = key(arr, arr + 5, start_filter, &end_filter);
     ck_assert_int_eq(rc, ERR_OK);
 
     ck_assert(start_filter != NULL);
@@ -60,8 +62,9 @@ START_TEST(pos_test_3)
 {
     int arr[] = {1, 2, 3, -4, 5};
     int *start_filter = NULL, *end_filter = NULL;
+    start_filter = malloc(3 * sizeof(int));
 
-    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    int rc = key(arr, arr + 5, start_filter, &end_filter);
     ck_assert_int_eq(rc, ERR_OK);
 
     ck_assert(start_filter != NULL);
@@ -82,8 +85,9 @@ START_TEST(pos_test_4)
 {
     int arr[] = {1, -2, 3, 4, 5};
     int *start_filter = NULL, *end_filter = NULL;
+    start_filter = malloc(1 * sizeof(int));
 
-    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    int rc = key(arr, arr + 5, start_filter, &end_filter);
     ck_assert_int_eq(rc, ERR_OK);
 
     ck_assert(start_filter != NULL);
@@ -102,8 +106,9 @@ START_TEST(pos_test_5)
 {
     int arr[] = {1, -2, 3, 4, -5};
     int *start_filter = NULL, *end_filter = NULL;
+    start_filter = malloc(4 * sizeof(int));
 
-    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    int rc = key(arr, arr + 5, start_filter, &end_filter);
     ck_assert_int_eq(rc, ERR_OK);
 
     ck_assert(start_filter != NULL);
@@ -125,8 +130,9 @@ START_TEST(pos_test_6)
 {
     int arr[] = {-1, -2, -3, -4, -5};
     int *start_filter = NULL, *end_filter = NULL;
+    start_filter = malloc(4 * sizeof(int));
 
-    int rc = key(arr, arr + 5, &start_filter, &end_filter);
+    int rc = key(arr, arr + 5, start_filter, &end_filter);
     ck_assert_int_eq(rc, ERR_OK);
 
     ck_assert(start_filter != NULL);
@@ -150,8 +156,8 @@ START_TEST(neg_test_1)
     int arr[] = {-1, 2, 3, 4};
     int *start_filter = NULL, *end_filter = NULL;
 
-    int rc = key(arr, arr + 4, &start_filter, &end_filter);
-    ck_assert_int_eq(rc, ERR_EMPTY_OUTPUT);
+    int rc = key(arr, arr + 4, start_filter, &end_filter);
+    ck_assert_int_eq(rc, ERR_POINTER);
 }
 END_TEST
 
@@ -163,7 +169,7 @@ START_TEST(neg_test_2)
     int *arr = NULL;
     int *start_filter = NULL, *end_filter = NULL;
 
-    int rc = key(arr, arr + 4, &start_filter, &end_filter);
+    int rc = key(arr, arr + 4, start_filter, &end_filter);
     ck_assert_int_eq(rc, ERR_POINTER);
 }
 END_TEST
@@ -176,7 +182,7 @@ START_TEST(neg_test_3)
     int arr[] = {-1, 2, 3, 4};
     int *start_filter = NULL, *end_filter = NULL;
 
-    int rc = key(arr + 4, arr, &start_filter, &end_filter);
+    int rc = key(arr + 4, arr, start_filter, &end_filter);
     ck_assert_int_eq(rc, ERR_POINTER);
 }
 END_TEST

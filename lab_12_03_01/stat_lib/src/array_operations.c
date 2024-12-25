@@ -1,9 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "array_operations.h"
-#include <stdlib.h>
-#include <stdbool.h>
 #include "errors.h"
+#include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 // Функция компаратор для двух целых чисел
 int int_compare(const void *a, const void *b)
@@ -124,7 +124,7 @@ void mysort(void *arr, size_t number, size_t width, int (*compare)(const void *,
  * @param pend Указатель на конец массива
  * @returns Указатель на последний отрицательный элемент
  */
-static const int *find_last_neg_el(const int *pbegin, const int *pend)
+const int *find_last_neg_el(const int *pbegin, const int *pend)
 {
     const int *index = pend;
 
@@ -135,8 +135,8 @@ static const int *find_last_neg_el(const int *pbegin, const int *pend)
     }
     return index;
 }
+
 /**
- * @brief
  * @brief В массиве остаются элементы от нулевого до р-го, где р - индекс последнего отрицательного элемента
  * этого массива либо число п, если такого элемента в массиве нет.
  * @param pbegin_source Указатель на начало исходного массива
@@ -145,10 +145,10 @@ static const int *find_last_neg_el(const int *pbegin, const int *pend)
  * @param pend_filtered_arr Указатель на указатель на конец второго фильтрованного массива
  * @returns Код ошибки
  */
-int key(const int *pbegin_source, const int *pend_source, int **pbegin_filtered_arr, int **pend_filtered_arr)
+int key(const int *pbegin_source, const int *pend_source, int *pbegin_filter, int **pend_filter)
 {
     // Проверки
-    if (pbegin_source == NULL || pend_source == NULL)
+    if (pbegin_source == NULL || pend_source == NULL || pbegin_filter == NULL)
         return ERR_POINTER;
     if (pend_source <= pbegin_source)
         return ERR_POINTER;
@@ -160,21 +160,16 @@ int key(const int *pbegin_source, const int *pend_source, int **pbegin_filtered_
     if (index - pbegin_source < 1)
         return ERR_EMPTY_OUTPUT;
 
-    // Выделение памяти под новый массив
-    *pbegin_filtered_arr = malloc((index - pbegin_source) * sizeof(int));
-    if (*pbegin_filtered_arr == NULL)
-    {
-        return ERR_ALLOCATION;
-    }
 
+    int *end = pbegin_filter;
     // Заполняем новый массив элементами старого
-    *pend_filtered_arr = *pbegin_filtered_arr;
     while (pbegin_source < index)
     {
-        **pend_filtered_arr = *pbegin_source;
+        *end = *pbegin_source;
         pbegin_source++;
-        (*pend_filtered_arr)++;
+        end++;
     }
 
+    *pend_filter = end;
     return ERR_OK;
 }
