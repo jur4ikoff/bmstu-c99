@@ -8,7 +8,6 @@ LIB_NAME := filterlib.a
 
 # Задаю имена будущим исполняемым файлам
 EXE_NAME := app.exe
-COLLECT := app.exe
 EXE_UNIT := unit_tests.exe
 
 # Настройки компиляции
@@ -20,8 +19,9 @@ LDFLAGS := -lm # Флаг линковки по умолчанию
 
 # Исходные файлы и объектные файлы
 src_files := $(wildcard $(SRC_DIR)/*.c)
-app_objs := $(patsubst $(SRC_DIR)/%.c, $(OUT_DIR)/%.o, $(filter-out $(SRC_DIR)/main.c, $(src_files)))
-lib_objs := $(filter-out $(OUT_DIR)/main.o $(OUT_DIR)/errors.o, $(app_objs))
+all_objs := $(patsubst $(SRC_DIR)/%.c, $(OUT_DIR)/%.o, $(filter-out $(SRC_DIR)/main.c, $(src_files)))
+lib_objs := $(filter-out $(OUT_DIR)/main.o $(OUT_DIR)/errors.o, $(all_objs))
+app_objs := $(filter-out $(lib_objs), $(all_objs))
 
 # Файлы с тестами и объектные файлы тестов
 test_srs_files := $(wildcard $(UNIT_DIR)/*.c)
@@ -30,17 +30,8 @@ test_objs := $(patsubst $(UNIT_DIR)/%.c, $(OUT_DIR)/%.o, $(test_srs_files))
 # Файл с main() для тестов
 main := $(OUT_DIR)/main.o
 
-
-$(EXE_NAME): $(app_objs) $(main) $(OUT_DIR)/$(LIB_NAME)
-	$(CC) $^ -o $@ 
-
-
-#$(COLLECT): $(app_objs) $(main)
-#	$(CC) $^ -o $@ 
-
-# Сборка тестов
-#$(EXE_UNIT): $(test_objs) $(app_objs)
-#	$(CC) $(test_objs) $(app_objs) -o $@ -lcheck $(LDFLAGS)
+$(EXE_NAME): $(app_objs) $(main) $(OUT_DIR)/$(LIB_NAME) 
+	$(CC) $^ -o $@ $(LDFLAGS)
 
 $(EXE_UNIT): $(test_objs) $(app_objs) $(lib_objs)
 	$(CC) $^ -o $@ -lcheck $(LDFLAGS)
@@ -102,7 +93,7 @@ ubsan: $(EXE_NAME)
 coverage: CC = gcc
 coverage: CFLAGS += -g --coverage -O0
 coverage: LDFLAGS += --coverage
-coverage: $(COLLECT)
+coverage: $(EXE_NAME)
 
 func : $(EXE_NAME)
 	./func_tests/scripts/func_tests.sh
