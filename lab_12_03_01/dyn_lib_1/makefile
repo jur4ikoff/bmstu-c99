@@ -3,7 +3,7 @@ SRC_DIR := ./src
 OUT_DIR := ./out
 INC_DIR := ./inc
 UNIT_DIR := ./unit_tests
-LIB_NAME := filterlib.so
+LIB_NAME := libfilter.so
 
 
 # Задаю имена будущим исполняемым файлам
@@ -15,7 +15,7 @@ CC := gcc # Выбор компилятора
 
 # gnu99 Для time.h
 CFLAGS := -std=c99 -I $(INC_DIR)/ -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra -fPIC # Флаги компиляции по умоланию
-LDFLAGS := -lm # Флаг линковки по умолчанию
+LDFLAGS := -lm -L. -lfilter # Флаг линковки по умолчанию
 
 # Исходные файлы и объектные файлы
 src_files := $(wildcard $(SRC_DIR)/*.c)
@@ -30,7 +30,7 @@ test_objs := $(patsubst $(UNIT_DIR)/%.c, $(OUT_DIR)/%.o, $(test_srs_files))
 # Файл с main() для тестов
 main := $(OUT_DIR)/main.o
 
-$(EXE_NAME): $(app_objs) $(main) $(OUT_DIR)/$(LIB_NAME) 
+$(EXE_NAME): $(app_objs) $(main) #  $(OUT_DIR)/$(LIB_NAME) 
 	$(CC) $^ -o $@ $(LDFLAGS)
 
 $(EXE_UNIT): $(test_objs) $(app_objs) $(lib_objs)
@@ -52,7 +52,7 @@ $(OUT_DIR)/$(LIB_NAME) : $(lib_objs)
 
 # Цель очистки
 clean:
-	$(RM) *.exe $(OUT_DIR)/*.o *.o *.out $(OUT_DIR)/*.gcno $(OUT_DIR)/*.gcda $(OUT_DIR)/*.d *.gcov
+	$(RM) *.exe $(OUT_DIR)/*.o *.o *.out $(OUT_DIR)/*.gcno $(OUT_DIR)/*.gcda $(OUT_DIR)/*.d *.gcov $(OUT_DIR)/*.a $(OUT_DIR)/*.so $(OUT_DIR)/*.dll
 
 # Цель build release
 release: CFLAGS += -DNDEBUG -g0

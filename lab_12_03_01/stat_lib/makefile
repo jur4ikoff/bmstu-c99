@@ -61,7 +61,7 @@ $(OUT_DIR)/$(LIB_NAME) : $(lib_objs)
 
 # Цель очистки
 clean:
-	$(RM) *.exe $(OUT_DIR)/*.o *.o *.out $(OUT_DIR)/*.gcno $(OUT_DIR)/*.gcda $(OUT_DIR)/*.d *.gcov
+	$(RM) *.exe $(OUT_DIR)/*.o *.o *.out $(OUT_DIR)/*.gcno $(OUT_DIR)/*.gcda $(OUT_DIR)/*.d *.gcov $(OUT_DIR)/*.a $(OUT_DIR)/*.so $(OUT_DIR)/*.dll
 
 # Цель build release
 release: CFLAGS += -DNDEBUG -g0
