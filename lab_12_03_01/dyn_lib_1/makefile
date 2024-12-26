@@ -3,7 +3,7 @@ SRC_DIR := ./src
 OUT_DIR := ./out
 INC_DIR := ./inc
 UNIT_DIR := ./unit_tests
-LIB_NAME := filterlib.a
+LIB_NAME := filterlib.so
 
 
 # Задаю имена будущим исполняемым файлам
@@ -14,7 +14,8 @@ EXE_UNIT := unit_tests.exe
 CC := gcc # Выбор компилятора
 
 # gnu99 Для time.h
-CFLAGS := -std=c99 -I $(INC_DIR)/ -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra # Флаги компиляции по умоланию
+CFLAGS := -std=c99 -I $(INC_DIR)/ -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra -fPIC # Флаги компиляции по умоланию
+# CFLAGSLIB := -std=c99 -I $(INC_DIR)/ -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra -fPIC # Флаги компиляции по умоланию
 LDFLAGS := -lm # Флаг линковки по умолчанию
 
 # Исходные файлы и объектные файлы
@@ -44,17 +45,8 @@ $(OUT_DIR)/%.o: $(SRC_DIR)/%.c
 $(OUT_DIR)/%.o: $(UNIT_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Компиляция check_main.c покрытием
-$(CHECK_MAIN): $(UNIT_DIR)/check_main.c
-	$(CC) $(CFLAGS) -c $< -o $@ 
-
-# Компиляция main.c для основного приложения
-$(SOURSE_MAIN): $(SRC_DIR)/main.c
-	$(CC) $(CFLAGS) -c $< -o $@ 
-
 $(OUT_DIR)/$(LIB_NAME) : $(lib_objs)
-	ar cr $@ $^
-	ranlib $@
+	$(CC) -o $@ -shared $(lib_objs)
 
 # Обозначение фиктивных целей
 .PHONY : clean release debug asan msan ubsan coverage func unit myunit macunit
@@ -89,15 +81,8 @@ ubsan: CFLAGS += -fno-omit-frame-pointer -fsanitize=undefined -g
 ubsan: LDFLAGS := -fsanitize=undefined
 ubsan: $(EXE_NAME)
 
-# Цель build coverage
-coverage: CC = gcc
-coverage: CFLAGS += -g --coverage -O0
-coverage: LDFLAGS += --coverage
-coverage: $(EXE_NAME)
-
 func : $(EXE_NAME)
 	./func_tests/scripts/func_tests.sh
-
 
 unit: unit_tests.exe
 	./unit_tests.exe
