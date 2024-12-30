@@ -9,5 +9,5 @@ typedef struct _struct_square_t
 } square_t;
 
 int class_square_create(square_t **object, double side);
-
+void class_square_destroy(square_t *object);
 #endif

@@ -11,7 +11,7 @@ typedef double (*set_fn_y)(void *object);
 
 typedef struct _method_t_
 {
-    calc_squre_fn calc_squre_fn;
+    calc_squre_fn calc_squre;
     set_fn_x set_x;
     set_fn_y set_y;
 } method_t;

@@ -11,11 +11,19 @@ int class_square_create(square_t **object, double side)
         return ERR_MEMORY_ALLOC;
     }
     (*object)->side = side;
-    (*object)->method.calc_squre_fn = calc_squre;
+    (*object)->method.calc_squre = calc_square_square;
 
     return ERR_OK;
 }
 
-double calc_squre(void *object)
+void class_square_destroy(square_t *object)
 {
+    free(object);
+}
+
+
+double calc_square_square(void *object)
+{
+    square_t *square = (square_t *)object;
+    return square->side * square->side;
 }

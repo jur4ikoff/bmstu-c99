@@ -1,7 +1,12 @@
 #include <stdio.h>
+#include "square.h"
+#include "rectangle.h"
 
 int main(void)
 {
-    printf("Hello, World!\n");
+    rectangle_t *rect = NULL;
+    class_rect_create(&rect, 1, 2);
+    double area = rect->method.calc_squre(rect);
+    printf("%f", area);
     return 0;
 }
