@@ -10,3 +10,6 @@ test*.txt
 test*.txt
 *gcov
 *bin
+*.so
+*.a
+*.dll
