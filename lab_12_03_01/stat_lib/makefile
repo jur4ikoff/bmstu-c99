@@ -3,6 +3,7 @@ SRC_DIR := ./src
 OUT_DIR := ./out
 INC_DIR := ./inc
 UNIT_DIR := ./unit_tests
+LIB_NAME := filterlib.a
 
 
 # Задаю имена будущим исполняемым файлам
@@ -18,7 +19,9 @@ LDFLAGS := -lm # Флаг линковки по умолчанию
 
 # Исходные файлы и объектные файлы
 src_files := $(wildcard $(SRC_DIR)/*.c)
-app_objs := $(patsubst $(SRC_DIR)/%.c, $(OUT_DIR)/%.o, $(filter-out $(SRC_DIR)/main.c, $(src_files)))
+all_objs := $(patsubst $(SRC_DIR)/%.c, $(OUT_DIR)/%.o, $(filter-out $(SRC_DIR)/main.c, $(src_files)))
+lib_objs := $(filter-out $(OUT_DIR)/main.o $(OUT_DIR)/errors.o, $(all_objs))
+app_objs := $(filter-out $(lib_objs), $(all_objs))
 
 # Файлы с тестами и объектные файлы тестов
 test_srs_files := $(wildcard $(UNIT_DIR)/*.c)
@@ -27,13 +30,11 @@ test_objs := $(patsubst $(UNIT_DIR)/%.c, $(OUT_DIR)/%.o, $(test_srs_files))
 # Файл с main() для тестов
 main := $(OUT_DIR)/main.o
 
+$(EXE_NAME): $(app_objs) $(main) $(OUT_DIR)/$(LIB_NAME) 
+	$(CC) $^ -o $@ $(LDFLAGS)
 
-$(EXE_NAME): $(app_objs) $(main)
-	$(CC) $(app_objs) $(main) $(LDFLAGS) -o $@ 
-
-# Сборка тестов
-$(EXE_UNIT): $(test_objs) $(app_objs)
-	$(CC) $(test_objs) $(app_objs) -o $@ -lcheck $(LDFLAGS)
+$(EXE_UNIT): $(test_objs) $(app_objs) $(lib_objs)
+	$(CC) $^ -o $@ -lcheck $(LDFLAGS)
 
 # Компиляция основных файлов
 $(OUT_DIR)/%.o: $(SRC_DIR)/%.c
@@ -51,12 +52,16 @@ $(CHECK_MAIN): $(UNIT_DIR)/check_main.c
 $(SOURSE_MAIN): $(SRC_DIR)/main.c
 	$(CC) $(CFLAGS) -c $< -o $@ 
 
+$(OUT_DIR)/$(LIB_NAME) : $(lib_objs)
+	ar cr $@ $^
+	ranlib $@
+
 # Обозначение фиктивных целей
 .PHONY : clean release debug asan msan ubsan coverage func unit myunit macunit
 
 # Цель очистки
 clean:
-	$(RM) *.exe $(OUT_DIR)/*.o *.o *.out $(OUT_DIR)/*.gcno $(OUT_DIR)/*.gcda $(OUT_DIR)/*.d *.gcov
+	$(RM) *.exe $(OUT_DIR)/*.o *.o *.out $(OUT_DIR)/*.gcno $(OUT_DIR)/*.gcda $(OUT_DIR)/*.d *.gcov $(OUT_DIR)/*.a $(OUT_DIR)/*.so $(OUT_DIR)/*.dll
 
 # Цель build release
 release: CFLAGS += -DNDEBUG -g0
