@@ -5,12 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Функция компаратор для двух целых чисел
-int int_compare(const void *a, const void *b)
-{
-    return *(int *)a - *(int *)b;
-}
-
 // Вывод массива на экран
 void print_array(int *start, int *end)
 {

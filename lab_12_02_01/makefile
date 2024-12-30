@@ -3,7 +3,7 @@ SRC_DIR := ./src
 OUT_DIR := ./out
 INC_DIR := ./inc
 UNIT_DIR := ./unit_tests
-LIB_NAME := libfilter.so
+LIB_NAME := libmy_arr.so
 
 
 # Задаю имена будущим исполняемым файлам
@@ -13,14 +13,13 @@ EXE_UNIT := unit_tests.exe
 # Настройки компиляции
 CC := gcc # Выбор компилятора
 
-# gnu99 Для time.h
 CFLAGS := -std=c99 -I $(INC_DIR)/ -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra -fPIC # Флаги компиляции по умоланию
-LDFLAGS := -lm -L. -lfilter # Флаг линковки по умолчанию
+LDFLAGS := -L$(OUT_DIR)/ -lmy_arr -Wl,-rpath,$(OUT_DIR) -lm# Флаг линковки по умолчанию
 
 # Исходные файлы и объектные файлы
 src_files := $(wildcard $(SRC_DIR)/*.c)
 all_objs := $(patsubst $(SRC_DIR)/%.c, $(OUT_DIR)/%.o, $(filter-out $(SRC_DIR)/main.c, $(src_files)))
-lib_objs := $(filter-out $(OUT_DIR)/main.o $(OUT_DIR)/errors.o, $(all_objs))
+lib_objs := $(filter-out $(OUT_DIR)/main.o, $(all_objs) )
 app_objs := $(filter-out $(lib_objs), $(all_objs))
 
 # Файлы с тестами и объектные файлы тестов
@@ -30,10 +29,10 @@ test_objs := $(patsubst $(UNIT_DIR)/%.c, $(OUT_DIR)/%.o, $(test_srs_files))
 # Файл с main() для тестов
 main := $(OUT_DIR)/main.o
 
-$(EXE_NAME): $(app_objs) $(main) #  $(OUT_DIR)/$(LIB_NAME) 
-	$(CC) $^ -o $@ $(LDFLAGS)
+$(EXE_NAME): $(app_objs) $(main) $(OUT_DIR)/$(LIB_NAME) 
+	$(CC) $(app_objs) $(main) -o $@ $(LDFLAGS)
 
-$(EXE_UNIT): $(test_objs) $(app_objs) $(lib_objs)
+$(EXE_UNIT): $(test_objs) $(app_objs) $(OUT_DIR)/$(LIB_NAME) 
 	$(CC) $^ -o $@ -lcheck $(LDFLAGS)
 
 # Компиляция основных файлов

@@ -3,7 +3,7 @@ SRC_DIR := ./src
 OUT_DIR := ./out
 INC_DIR := ./inc
 UNIT_DIR := ./unit_tests
-LIB_NAME := filterlib.so
+LIB_NAME := libfilter.so
 
 
 # Задаю имена будущим исполняемым файлам
@@ -15,8 +15,7 @@ CC := gcc # Выбор компилятора
 
 # gnu99 Для time.h
 CFLAGS := -std=c99 -I $(INC_DIR)/ -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra -fPIC # Флаги компиляции по умоланию
-# CFLAGSLIB := -std=c99 -I $(INC_DIR)/ -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra -fPIC # Флаги компиляции по умоланию
-LDFLAGS := -lm # Флаг линковки по умолчанию
+LDFLAGS := -lm -L$(OUT_DIR)/ -lfilter -Wl,-rpath,$(OUT_DIR) # Флаг линковки по умолчанию
 
 # Исходные файлы и объектные файлы
 src_files := $(wildcard $(SRC_DIR)/*.c)
@@ -32,9 +31,9 @@ test_objs := $(patsubst $(UNIT_DIR)/%.c, $(OUT_DIR)/%.o, $(test_srs_files))
 main := $(OUT_DIR)/main.o
 
 $(EXE_NAME): $(app_objs) $(main) $(OUT_DIR)/$(LIB_NAME) 
-	$(CC) $^ -o $@ $(LDFLAGS)
+	$(CC) $(app_objs) $(main) -o $@ $(LDFLAGS)
 
-$(EXE_UNIT): $(test_objs) $(app_objs) $(lib_objs)
+$(EXE_UNIT): $(test_objs) $(app_objs) $(OUT_DIR)/$(LIB_NAME) 
 	$(CC) $^ -o $@ -lcheck $(LDFLAGS)
 
 # Компиляция основных файлов

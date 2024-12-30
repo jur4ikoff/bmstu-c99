@@ -5,19 +5,15 @@ RESET_COLOR='\033[0m'
 RED='\033[31m'
 GREEN='\033[32m'
 
+verbose_flag=0
+valgrind_flag=0
+
 # Проверка параметра verbose и параметра valgrind (сделал флаг, чтобы запускать на macos)
 if [[ "$1" == "-v" ]]; then
     verbose_flag=1
-    # echo "Verbose=true"
-elif [[ "$1" == "-valgrind" ]]; then
+fi
+if [[ "$2" == "-valgrind" ]]; then
     valgrind_flag=1
-elif [[ "$2" == "-v" ]]; then
-    verbose_flag=1
-elif [[ "$2" == "-valgrind" ]]; then
-    valgrind_flag=1
-else
-    verbose_flag=0
-    valgrind_flag=0
 fi
 
 # Определяем путь к скрипту
@@ -126,7 +122,7 @@ for file in $files; do
                 exit 2
             fi
         fi
-        
+
         # Обработка результатов
         if [[ "$res" == 0 ]]; then
             # Увеличиваем счетчик проваленных тестов

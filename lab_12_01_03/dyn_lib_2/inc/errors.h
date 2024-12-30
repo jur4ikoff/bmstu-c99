@@ -8,10 +8,10 @@
 #define ERR_READ 3
 #define ERR_ALLOCATION 4
 #define ERR_EMPTY_INPUT 5
-// #define ERR_WRITE 5
 #define ERR_POINTER 6
 #define ERR_LONG_ARRAY 7
 #define ERR_EMPTY_OUTPUT 8
+#define ERR_LOAD_LIB 9
 
 void print_err_msg(int arg);
 #endif
