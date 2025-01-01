@@ -2,7 +2,7 @@
 #define RECTANGLE_H__
 #include "const.h"
 
-typedef struct _struct_square_t
+typedef struct _struct_rect_t
 {
     method_t method;
     double a, b;

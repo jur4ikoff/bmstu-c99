@@ -3,9 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+double calc_square_square(void *object);
+
 int class_square_create(square_t **object, double side)
 {
-    square_t *object = malloc(sizeof(square_t));
+    *object = malloc(sizeof(square_t));
     if (*object == NULL)
     {
         return ERR_MEMORY_ALLOC;

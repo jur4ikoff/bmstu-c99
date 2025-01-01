@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+double calc_rectangle_square(void *object);
+
 int class_rect_create(rectangle_t **object, double a, double b)
 {
     *object = malloc(sizeof(rectangle_t));
