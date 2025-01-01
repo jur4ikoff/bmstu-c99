@@ -1,55 +1,5 @@
-import ctypes as ct
 import tkinter as tk
 from tkinter import messagebox
-
-
-PATH_TO_LIB = "./out/libmy_arr.so"
-_shift_arr = _filter = None
-
-
-def load_functions(lib):
-    _shift_arr = lib.shift_arr
-    _shift_arr.argtypes = (ct.POINTER(ct.c_int), ct.c_size_t, ct.c_int)
-    _shift_arr.restype = ct.c_int
-
-    _filter = lib.filter
-    _filter.argtypes = (
-        ct.POINTER(ct.c_int),
-        ct.POINTER(ct.c_int),
-        ct.c_size_t,
-        ct.POINTER(ct.c_int),
-    )
-    _filter.restype = ct.c_int
-    return (_shift_arr, _filter)
-
-
-def shift_arr(arr, shift: int):
-    arr_len = len(arr)
-    src = (ct.c_int * arr_len)(*arr)
-    rc = _shift_arr(src, arr_len, shift)
-    new_arr = list(src)
-    return (rc, new_arr)
-
-
-def filter(arr: list) -> tuple[int, list]:
-    arr_len = len(arr)
-
-    src = (ct.c_int * arr_len)(*arr)
-    dst = ct.POINTER(ct.c_int)()
-    src_len = ct.c_size_t(arr_len)
-    dst_len = ct.c_int()
-
-    rc = _filter(dst, src, src_len, ct.byref(dst_len))
-    if rc != 0:
-        return (rc, None)
-
-    # print(dst_len.value)
-    dst = (ct.c_int * arr_len)()
-    # dst = (ct.c_int * dst_len.value)()
-    rc = _filter(dst, src, src_len, ct.byref(dst_len))
-
-    return (rc, dst)
-
 
 def shift_handler():
     try:
@@ -94,9 +44,6 @@ def filter_handler():
 
 
 if __name__ == "__main__":
-    lib = ct.CDLL(PATH_TO_LIB)
-    _shift_arr, _filter = load_functions(lib)
-
     # Создаем главное окно
     root = tk.Tk()
     root.title("Сдвиг массива влево и копирование полных квадратов")
