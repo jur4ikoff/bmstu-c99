@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import my_arr_lib
 
 def shift_handler():
     try:

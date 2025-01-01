@@ -1,9 +1,9 @@
 from distutils.core import setup, Extension
 
-setup(name='example_dylib',
+setup(name='my_arr_lib',
     ext_modules=[
-        Extension('example_dylib',
-            ['wrap.c'],
+        Extension('my_arr_lib',
+            ['./myarrlib.c'],
             include_dirs = ['.'],
             define_macros = [('FOO','1')],
             undef_macros = ['BAR'],
