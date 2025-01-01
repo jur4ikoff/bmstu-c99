@@ -92,7 +92,7 @@ assoc_array_error_t assoc_array_insert(assoc_array_t arr, const char *key, int n
         return ASSOC_ARRAY_KEY_EXISTS;
     (void)el;
 
-    data_t data = { 0 };
+    data_t data = {0};
     data.key = strdup(key);
     data.value = num;
 

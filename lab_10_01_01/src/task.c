@@ -4,6 +4,7 @@
 #include "linked_list.h"
 #include <stdlib.h>
 
+// Конвертация из строки в число
 int string_to_int(char *string, int *number)
 {
     int rc = ERR_OK;
@@ -17,6 +18,7 @@ int string_to_int(char *string, int *number)
     return rc;
 }
 
+// Фильтр
 node_t *filter(node_t **head, int year, int price)
 {
     if (head == NULL || *head == NULL)

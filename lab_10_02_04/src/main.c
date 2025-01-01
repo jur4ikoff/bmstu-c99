@@ -55,6 +55,7 @@ static operations_t validate_operation_arg(char *argument)
     return OP_UNKNOWN;
 }
 
+// Ввод строки
 int input_string(char *string, size_t max, FILE *file)
 {
     if (!fgets(string, max, file))
