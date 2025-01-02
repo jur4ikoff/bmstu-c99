@@ -7,8 +7,6 @@ setup(name='my_arr',
         Extension('my_arr_lib',
             ['./src/myarrlib.c'],
             include_dirs = ['./inc/'],            
-            define_macros = [('FOO','1')],
-            undef_macros = ['BAR'],
             library_dirs = ['./out/'],
             libraries = ['my_arr']
             )

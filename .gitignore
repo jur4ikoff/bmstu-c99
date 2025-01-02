@@ -13,3 +13,4 @@ test*.txt
 *.so
 *.a
 *.dll
+build/
