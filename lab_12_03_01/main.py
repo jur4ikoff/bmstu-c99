@@ -38,7 +38,7 @@ def filter_handler():
 
         # Поиск числа в массиве
         # ХАРД КОД
-        # rc, res = filter(array)
+        # rc, res = my_arr_lib.filter(array)
         rc = 0
         res = array
         if (rc == 0):
