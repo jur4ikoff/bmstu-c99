@@ -15,19 +15,23 @@
  * @param[in] count Количество элементов. Максимальный размер 10000 элементов
  * @param[in] shift Сдвиг
  */
-int shift_arr(int *arr, size_t count, int shift)
+PyObject *shift_arr(PyObject *self, PyObject *args)
 {
     // Валидация указателя на массив
-    if (arr == NULL)
-        return ERR_POINTER;
+    PyObject *obj;
 
+    // Парсим аргументы
+    if (!PyArg_ParseTuple(args, "O", &objs))
+        return return Py_BuildValue("i", ERR_POINTER);
+
+        
     // Валидация размера
     if (count > ARR_MAX_SIZE || count == 0)
-        return ERR_SIZE;
+        return Py_BuildValue("i", ERR_SIZE);
 
     // Проверка идеальной ситуации
     if (count == 1 || shift == 0)
-        return ERR_OK;
+        return Py_BuildValue("i", ERR_OK);
 
     int *temp = NULL;
     if (shift > 0)
@@ -38,7 +42,7 @@ int shift_arr(int *arr, size_t count, int shift)
         // Выделение памяти под временный массив
         temp = malloc(sizeof(int) * shift);
         if (temp == NULL)
-            return ERR_MEMORY_ALLOCATION;
+            return Py_BuildValue("i", ERR_MEMORY_ALLOCATION);
 
         for (size_t i = 0; i < (size_t)shift; i++)
         {
@@ -57,7 +61,7 @@ int shift_arr(int *arr, size_t count, int shift)
         shift = (ABS(shift) % count);
         temp = malloc(sizeof(int) * shift);
         if (!temp)
-            return ERR_MEMORY_ALLOCATION;
+            return Py_BuildValue("i", ERR_MEMORY_ALLOCATION);
         for (size_t i = 0; i < (size_t)shift; i++)
         {
             temp[i] = arr[count - shift + i];
@@ -72,7 +76,7 @@ int shift_arr(int *arr, size_t count, int shift)
 
     // Освобождение памяти из-под временного массива и выход из функции
     free(temp);
-    return ERR_OK;
+    return Py_BuildValue("i", ERR_OK);
 }
 
 // Возвращает количество чисел полных квадратов до n
@@ -181,7 +185,7 @@ int filter(int *dst, int *src, size_t src_len, int *dst_len)
 // название, функция, параметры, описание
 static PyMethodDef myarrlib_methods[] = {
     { "shift_arr", shift_arr, METH_VARARGS, "circle shift array" },
-    { "filter", filter, METH_VARARGS, "filter only number, which are full squares" },
+    // { "filter", filter, METH_VARARGS, "filter only number, which are full squares" },
     { NULL, NULL, 0, NULL }
 };
 
