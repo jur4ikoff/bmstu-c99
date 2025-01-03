@@ -177,11 +177,16 @@ int filter(int *dst, int *src, size_t src_len, int *dst_len)
     return ERR_OK;
 }
 
+PyObject *py_shift_arr(Pyobject *self, Pyobject args)
+{
+
+}
+
 // Таблица методов реализуемых расширением
 // название, функция, параметры, описание
 static PyMethodDef myarrlib_methods[] = {
-    { "shift_arr", shift_arr, METH_VARARGS, "circle shift array" },
-    { "filter", filter, METH_VARARGS, "filter only number, which are full squares" },
+    { "shift_arr", py_shift_arr, METH_VARARGS, "circle shift array" },
+    // { "filter", filter, METH_VARARGS, "filter only number, which are full squares" },
     { NULL, NULL, 0, NULL }
 };
 

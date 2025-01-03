@@ -35,7 +35,8 @@ def filter_handler():
         array = list(map(int, array))
 
         # Поиск числа в массиве
-        rc, res = filter(array)
+        #rc, res = filter(array)
+        rc = 0, res = array
         if (rc == 0):
             result_label.config(text=f"Результат: {" ".join(map(str, res))}")
         else:
