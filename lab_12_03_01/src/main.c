@@ -19,7 +19,7 @@ void print_error_message(int arg)
     printf("%s", RESET);
 }
 
-static void print_arr(int *arr, size_t size)
+void print_arr(int *arr, size_t size)
 {
     for (size_t i = 0; i < size; i++)
     {
@@ -30,7 +30,7 @@ static void print_arr(int *arr, size_t size)
 
 int main(void)
 {
-    int a[MAX_SIZE] = { 1, 3, 0, 4 };
+    /*int a[MAX_SIZE] = { 1, 3, 0, 4 };
     int *dst = NULL;
     print_arr(a, sizeof(a) / sizeof(a[0]));
     int dst_len = 0;
@@ -39,5 +39,6 @@ int main(void)
     dst = malloc(sizeof(int) * dst_len);
     filter(dst, a, 4, &dst_len);
     print_arr(dst, dst_len);
-    free(dst);
+    free(dst);*/
+    return 0;
 }

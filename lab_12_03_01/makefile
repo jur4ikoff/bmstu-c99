@@ -13,7 +13,8 @@ EXE_UNIT := unit_tests.exe
 # Настройки компиляции
 CC := gcc # Выбор компилятора
 
-CFLAGS := -std=c99 -I $(INC_DIR)/ -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra -fPIC # Флаги компиляции по умоланию
+INCLUDE_PYTHON_C := -I/usr/include/python3.12 #  I/usr/include/x86_64-linux-gnu/python3.12
+CFLAGS := -std=gnu99 -I$(INC_DIR)/ $(INCLUDE_PYTHON_C) -Werror -Wall -pedantic -Wfloat-conversion -Wfloat-equal -Wvla -Wextra -fPIC # Флаги компиляции по умоланию
 LDFLAGS := -L$(OUT_DIR)/ -lmy_arr -Wl,-rpath,$(OUT_DIR) -lm# Флаг линковки по умолчанию
 
 # Исходные файлы и объектные файлы
