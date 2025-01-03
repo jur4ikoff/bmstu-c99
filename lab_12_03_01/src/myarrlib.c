@@ -15,23 +15,19 @@
  * @param[in] count Количество элементов. Максимальный размер 10000 элементов
  * @param[in] shift Сдвиг
  */
-PyObject *shift_arr(PyObject *self, PyObject *args)
+int shift_arr(int *arr, size_t count, int shift)
 {
     // Валидация указателя на массив
-    PyObject *obj;
+    if (arr == NULL)
+        return ERR_POINTER;
 
-    // Парсим аргументы
-    if (!PyArg_ParseTuple(args, "O", &objs))
-        return return Py_BuildValue("i", ERR_POINTER);
-
-        
     // Валидация размера
     if (count > ARR_MAX_SIZE || count == 0)
-        return Py_BuildValue("i", ERR_SIZE);
+        return ERR_SIZE;
 
     // Проверка идеальной ситуации
     if (count == 1 || shift == 0)
-        return Py_BuildValue("i", ERR_OK);
+        return ERR_OK;
 
     int *temp = NULL;
     if (shift > 0)
@@ -42,7 +38,7 @@ PyObject *shift_arr(PyObject *self, PyObject *args)
         // Выделение памяти под временный массив
         temp = malloc(sizeof(int) * shift);
         if (temp == NULL)
-            return Py_BuildValue("i", ERR_MEMORY_ALLOCATION);
+            return ERR_MEMORY_ALLOCATION;
 
         for (size_t i = 0; i < (size_t)shift; i++)
         {
@@ -61,7 +57,7 @@ PyObject *shift_arr(PyObject *self, PyObject *args)
         shift = (ABS(shift) % count);
         temp = malloc(sizeof(int) * shift);
         if (!temp)
-            return Py_BuildValue("i", ERR_MEMORY_ALLOCATION);
+            return ERR_MEMORY_ALLOCATION;
         for (size_t i = 0; i < (size_t)shift; i++)
         {
             temp[i] = arr[count - shift + i];
@@ -76,7 +72,7 @@ PyObject *shift_arr(PyObject *self, PyObject *args)
 
     // Освобождение памяти из-под временного массива и выход из функции
     free(temp);
-    return Py_BuildValue("i", ERR_OK);
+    return ERR_OK;
 }
 
 // Возвращает количество чисел полных квадратов до n
@@ -181,17 +177,26 @@ int filter(int *dst, int *src, size_t src_len, int *dst_len)
     return ERR_OK;
 }
 
+PyObject *py_shift_arr(PyObject *self, PyObject *args)
+{
+    (void)self;
+    (void)args;
+    // PyObject *array_obj = {0};
+    int i = 10;
+    return Py_BuildValue("i", i);
+}
+
 // Таблица методов реализуемых расширением
 // название, функция, параметры, описание
 static PyMethodDef myarrlib_methods[] = {
-    { "shift_arr", shift_arr, METH_VARARGS, "circle shift array" },
+    { "shift_arr", py_shift_arr, METH_VARARGS, "circle shift array" },
     // { "filter", filter, METH_VARARGS, "filter only number, which are full squares" },
     { NULL, NULL, 0, NULL }
 };
 
-static struct PyModuleDef myarrlib_module = { PyModuleDef_HEAD_INIT, "myarrlib", "...", -1, myarrlib_methods };
+static struct PyModuleDef myarrlib_module = { PyModuleDef_HEAD_INIT, "myarrlib", "...", -1, myarrlib_methods, NULL, 0, 0, 0 };
 
-PyMODINIT_FUNC PyInit_myarrlib(void)
+PyMODINIT_FUNC PyInit_my_arr_lib(void)
 {
     return PyModule_Create(&myarrlib_module);
 }

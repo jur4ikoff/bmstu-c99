@@ -16,7 +16,9 @@ def shift_handler():
         shift = int(number_input)
 
         # Поиск числа в массиве
-        rc, res = shift_arr(array, shift)
+        # rc, res = shift_arr(array, shift)
+        rc = my_arr_lib.shift_arr(array, shift)
+        print(rc)
         if (rc == 0):
             result_label.config(text=f"Результат: {" ".join(map(str, res))}")
         else:
