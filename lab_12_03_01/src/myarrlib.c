@@ -1,10 +1,10 @@
 #include "myarrlib.h"
 #include "errors.h"
+#include <Python.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <Python.h>
 
 #define ABS(x) ((x >= 0) ? (x) : (-x))
 #define ARR_MAX_SIZE 10000
@@ -175,4 +175,19 @@ int filter(int *dst, int *src, size_t src_len, int *dst_len)
 
     free(sqrt_num);
     return ERR_OK;
+}
+
+// Таблица методов реализуемых расширением
+// название, функция, параметры, описание
+static PyMethodDef myarrlib_methods[] = {
+    { "shift_arr", shift_arr, METH_VARARGS, "circle shift array" },
+    { "filter", filter, METH_VARARGS, "filter only number, which are full squares" },
+    { NULL, NULL, 0, NULL }
+};
+
+static struct PyModuleDef myarrlib_module = { PyModuleDef_HEAD_INIT, "myarrlib", "...", -1, myarrlib_methods };
+
+PyMODINIT_FUNC PyInit_myarrlib(void)
+{
+    return PyModule_Create(&myarrlib_module);
 }
