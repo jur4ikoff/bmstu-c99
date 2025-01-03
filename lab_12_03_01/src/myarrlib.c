@@ -179,11 +179,47 @@ int filter(int *dst, int *src, size_t src_len, int *dst_len)
 
 PyObject *py_shift_arr(PyObject *self, PyObject *args)
 {
+    PyObject *obj;
+    int shift;
+    int size;
+    PyObject *tuple = PyTuple_New(2);
+
+    // Ошибки
+    PyObject *err_pointer = PyLong_FromLong(ERR_POINTER);
+    PyObject *err_size = PyLong_FromLong(ERR_SIZE);
+    PyObject *err_ok = PyLong_FromLong(ERR_OK);
+
+    // Заимствованная ссылка
+    if (!PyArg_ParseTuple(args, "Oii", &obj, &size, &shift))
+    {
+        PyErr_SetString(PyExc_TypeError, "Cant parse arguments");
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, obj);
+        return tuple;
+    }
+
+    if (!PyList_Check(obj))
+    {
+        PyErr_SetString(PyExc_TypeError, "First argument must be a list");
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, obj);
+        return tuple;
+    }
+
+    if (size < 1 || size > ARR_MAX_SIZE)
+    {
+        PyTuple_SetItem(tuple, 0, err_size);
+        PyTuple_SetItem(tuple, 1, obj);
+        return tuple;
+    }
+
     (void)self;
-    (void)args;
-    // PyObject *array_obj = {0};
-    int i = 10;
-    return Py_BuildValue("i", i);
+    (void)obj;
+    (void)shift;
+
+    PyTuple_SetItem(tuple, 0, err_ok);
+    PyTuple_SetItem(tuple, 1, obj);
+    return tuple;
 }
 
 // Таблица методов реализуемых расширением
