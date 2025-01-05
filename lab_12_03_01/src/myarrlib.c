@@ -177,22 +177,44 @@ int filter(int *dst, int *src, size_t src_len, int *dst_len)
     return ERR_OK;
 }
 
+static PyObject *copy_to_py_list(const int *arr, int size)
+{
+    PyObject *plist, *pitem;
+
+    plist = PyList_New(size);
+    if (plist == NULL)
+    {
+        return NULL;
+    }
+
+    for (int i = 0; i < size; i++)
+    {
+        pitem = PyLong_FromLong(arr[i]);
+        if (pitem == NULL)
+        {
+            Py_DECREF(plist);
+            return NULL;
+        }
+        PyList_SET_ITEM(plist, i, pitem);
+    }
+
+    return plist;
+}
+
 PyObject *py_shift_arr(PyObject *self, PyObject *args)
 {
-    PyObject *obj;
-    int shift;
-    int size;
+    PyObject *obj, *seq = NULL, *item, *i_item, *res;
+    int shift, size;
     PyObject *tuple = PyTuple_New(2);
 
     // Ошибки
     PyObject *err_pointer = PyLong_FromLong(ERR_POINTER);
-    PyObject *err_size = PyLong_FromLong(ERR_SIZE);
     PyObject *err_ok = PyLong_FromLong(ERR_OK);
+    PyObject *err_mem = PyLong_FromLong(ERR_MEMORY_ALLOCATION);
 
     // Заимствованная ссылка
-    if (!PyArg_ParseTuple(args, "Oii", &obj, &size, &shift))
+    if (!PyArg_ParseTuple(args, "Oi", &obj, &shift))
     {
-        PyErr_SetString(PyExc_TypeError, "Cant parse arguments");
         PyTuple_SetItem(tuple, 0, err_pointer);
         PyTuple_SetItem(tuple, 1, obj);
         return tuple;
@@ -200,25 +222,73 @@ PyObject *py_shift_arr(PyObject *self, PyObject *args)
 
     if (!PyList_Check(obj))
     {
-        PyErr_SetString(PyExc_TypeError, "First argument must be a list");
         PyTuple_SetItem(tuple, 0, err_pointer);
         PyTuple_SetItem(tuple, 1, obj);
         return tuple;
     }
 
-    if (size < 1 || size > ARR_MAX_SIZE)
+    seq = PySequence_Fast(obj, "Argument must be itterable");
+    if (seq == NULL)
     {
-        PyTuple_SetItem(tuple, 0, err_size);
+        PyErr_SetString(PyExc_TypeError, "Argument must be itterable");
+        PyTuple_SetItem(tuple, 0, err_pointer);
         PyTuple_SetItem(tuple, 1, obj);
         return tuple;
     }
 
+    size = PySequence_Fast_GET_SIZE(seq);
+    int *arr = calloc(size, sizeof(int));
+    if (arr == NULL)
+    {
+        Py_DECREF(seq);
+        PyTuple_SetItem(tuple, 0, err_mem);
+        PyTuple_SetItem(tuple, 1, obj);
+    }
+
+    for (int i = 0; i < size; i++)
+    {
+        item = PySequence_Fast_GET_ITEM(seq, i);
+        if (item == NULL)
+        {
+            Py_DECREF(seq);
+            free(arr);
+            PyTuple_SetItem(tuple, 0, err_pointer);
+            PyTuple_SetItem(tuple, 1, obj);
+            return tuple;
+        }
+
+        i_item = PyNumber_Long(item);
+        if (i_item == NULL)
+        {
+            Py_DECREF(seq);
+            free(arr);
+            PyTuple_SetItem(tuple, 0, err_pointer);
+            PyTuple_SetItem(tuple, 1, obj);
+            return tuple;
+        }
+
+        arr[i] = (int)PyLong_AsLong(i_item);
+        Py_DECREF(i_item);
+    }
+
+    int rc;
+    if ((rc = shift_arr(arr, size, shift)) != ERR_OK)
+    {
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, NULL);
+        Py_DECREF(seq);
+        return tuple;
+    }
+
+    res = copy_to_py_list(arr, size);
+
     (void)self;
-    (void)obj;
-    (void)shift;
+    Py_DECREF(seq);
+    free(arr);
 
     PyTuple_SetItem(tuple, 0, err_ok);
-    PyTuple_SetItem(tuple, 1, obj);
+    PyTuple_SetItem(tuple, 1, res);
+
     return tuple;
 }
 
