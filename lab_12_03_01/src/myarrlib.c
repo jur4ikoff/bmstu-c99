@@ -237,12 +237,21 @@ PyObject *py_shift_arr(PyObject *self, PyObject *args)
     }
 
     size = PySequence_Fast_GET_SIZE(seq);
+    if (size < 1 || size > ARR_MAX_SIZE)
+    {
+        PyErr_SetString(PyExc_TypeError, "Argument must be itterable");
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, obj);
+        return tuple;
+    }
+
     int *arr = calloc(size, sizeof(int));
     if (arr == NULL)
     {
         Py_DECREF(seq);
         PyTuple_SetItem(tuple, 0, err_mem);
         PyTuple_SetItem(tuple, 1, obj);
+        return tuple;
     }
 
     for (int i = 0; i < size; i++)
@@ -292,11 +301,143 @@ PyObject *py_shift_arr(PyObject *self, PyObject *args)
     return tuple;
 }
 
+PyObject *py_filter(PyObject *self, PyObject *args)
+{
+    PyObject *obj, *seq = NULL, *item, *i_item, *res;
+    int size, *new_arr = NULL;
+    PyObject *tuple = PyTuple_New(2);
+
+    // Ошибки
+    PyObject *err_pointer = PyLong_FromLong(ERR_POINTER);
+    PyObject *err_ok = PyLong_FromLong(ERR_OK);
+    PyObject *err_mem = PyLong_FromLong(ERR_MEMORY_ALLOCATION);
+
+    // Заимствованная ссылка
+    if (!PyArg_ParseTuple(args, "O", &obj))
+    {
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, obj);
+        return tuple;
+    }
+
+    if (!PyList_Check(obj))
+    {
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, obj);
+        return tuple;
+    }
+
+    seq = PySequence_Fast(obj, "Argument must be itterable");
+    if (seq == NULL)
+    {
+        PyErr_SetString(PyExc_TypeError, "Argument must be itterable");
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, obj);
+        return tuple;
+    }
+
+    size = PySequence_Fast_GET_SIZE(seq);
+    if (size < 1 || size > ARR_MAX_SIZE)
+    {
+        PyErr_SetString(PyExc_TypeError, "Argument must be itterable");
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, obj);
+        return tuple;
+    }
+
+    int *arr = calloc(size, sizeof(int));
+    if (arr == NULL)
+    {
+        Py_DECREF(seq);
+        PyTuple_SetItem(tuple, 0, err_mem);
+        PyTuple_SetItem(tuple, 1, obj);
+        return tuple;
+    }
+
+    for (int i = 0; i < size; i++)
+    {
+        item = PySequence_Fast_GET_ITEM(seq, i);
+        if (item == NULL)
+        {
+            Py_DECREF(seq);
+            free(arr);
+            PyTuple_SetItem(tuple, 0, err_pointer);
+            PyTuple_SetItem(tuple, 1, obj);
+            return tuple;
+        }
+
+        i_item = PyNumber_Long(item);
+        if (i_item == NULL)
+        {
+            Py_DECREF(seq);
+            free(arr);
+            PyTuple_SetItem(tuple, 0, err_pointer);
+            PyTuple_SetItem(tuple, 1, obj);
+            return tuple;
+        }
+
+        arr[i] = (int)PyLong_AsLong(i_item);
+        Py_DECREF(i_item);
+    }
+
+    int rc;
+    int new_len = 0;
+    
+    if ((rc = filter(new_arr, arr, size, &new_len)) != ERR_OK)
+    {
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, NULL);
+        Py_DECREF(seq);
+        return tuple;
+    }
+
+    PyTuple_SetItem(tuple, 0, PyLong_FromLong(new_len));
+    PyTuple_SetItem(tuple, 1, copy_to_py_list(arr, size));
+    return tuple;
+
+
+    if (new_len < 1)
+    {
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, NULL);
+        Py_DECREF(seq);
+        return tuple;
+    }
+
+    new_arr = calloc(new_len, sizeof(int));
+    if (new_arr == NULL)
+    {
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, NULL);
+        Py_DECREF(seq);
+        return tuple;
+    }
+
+    if ((rc = filter(new_arr, arr, size, &new_len)) != ERR_OK)
+    {
+        PyTuple_SetItem(tuple, 0, err_pointer);
+        PyTuple_SetItem(tuple, 1, NULL);
+        Py_DECREF(seq);
+        return tuple;
+    }
+    free(arr);
+    res = copy_to_py_list(new_arr, new_len);
+
+    (void)self;
+    Py_DECREF(seq);
+    free(new_arr);
+
+    PyTuple_SetItem(tuple, 0, err_ok);
+    PyTuple_SetItem(tuple, 1, res);
+
+    return tuple;
+}
+
 // Таблица методов реализуемых расширением
 // название, функция, параметры, описание
 static PyMethodDef myarrlib_methods[] = {
     { "shift_arr", py_shift_arr, METH_VARARGS, "circle shift array" },
-    // { "filter", filter, METH_VARARGS, "filter only number, which are full squares" },
+    { "filter", py_filter, METH_VARARGS, "filter only number, which are full squares" },
     { NULL, NULL, 0, NULL }
 };
 

@@ -36,10 +36,8 @@ def filter_handler():
         array = list(map(int, array))
 
         # Поиск числа в массиве
-        # ХАРД КОД
-        # rc, res = my_arr_lib.filter(array)
-        rc = 0
-        res = array
+        rc, res = my_arr_lib.filter(array)
+        print(rc, res)
         if (rc == 0):
             result_label.config(text=f"Результат: {" ".join(map(str, res))}")
         else:
