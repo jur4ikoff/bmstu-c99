@@ -1,0 +1,30 @@
+# Объявлем пути
+SRC_DIR := ./src
+INC_DIR := ./inc
+OUT_DIR := ./out
+
+EXE_NAME := app.exe # Имя исходника
+CC := gcc # Компилятор
+CFLAGS := -std=c99 -I $(INC_DIR)/ -Wextra -Wall -Werror -pedantic -Wfloat-conversion -Wvla # Флаги комплиции по умолчанию 
+LDFLAGS := -lm
+
+# Исходные файлы
+SRC_FILES := $(wildcard $(SRC_DIR)/*.c)
+# Есть 2 варианта сделать список файлов с расширением .о
+# OBJ_FILES := $(patsubst $(SRC_DIR)/%.c, $(OUT_DIR)/%.o, $(SRC_FILES))
+OBJ_FILES := $(SRC_FILES:.c=.o)
+
+# В ручную собираем проект
+$(EXE_NAME) : $(OBJ_FILES)
+	$(CC) $(LDFLAGS) $^ -o $(EXE_NAME)
+
+# Компилируем каждый файл
+$(OUT_DIR)/%.o : $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c $^ -o $@
+	
+# Задаем фоновые цели
+.PHONY : clean
+
+# Цель очистки
+clean: 
+	$(RM) ./$(OUT_DIR)/*.o *.o ./$(OUT_DIR)/*.d *.d ./app.exe

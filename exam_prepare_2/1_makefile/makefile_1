@@ -1,0 +1,27 @@
+# Объявлем пути
+SRC_DIR := ./src
+INC_DIR := ./inc
+OUT_DIR := ./out
+
+EXE_NAME := app.exe # Имя исходника
+CC := gcc # Компилятор
+CFLAGS := -std=c99 -I $(INC_DIR)/ -Wextra -Wall -Werror -pedantic -Wfloat-conversion -Wvla # Флаги комплиции по умолчанию 
+LDFLAGS := -lm
+
+# В ручную собираем проект
+$(EXE_NAME) : $(OUT_DIR)/main.o $(OUT_DIR)/test.o
+	$(CC) $(LDFLAGS) $(OUT_DIR)/main.o $(OUT_DIR)/test.o -o $(EXE_NAME)
+
+# Компилируем каждый файл
+$(OUT_DIR)/main.o : $(SRC_DIR)/main.c
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/main.c -o $(OUT_DIR)/main.o
+
+$(OUT_DIR)/test.o : $(SRC_DIR)/test.c
+	$(CC) $(CFLAGS) -c $(SRC_DIR)/test.c -o $(OUT_DIR)/test.o
+	
+# Задаем фоновые цели
+.PHONY : clean
+
+# Цель очистки
+clean: 
+	$(RM) ./$(OUT_DIR)/*.o *.o ./$(OUT_DIR)/*.d *.d
