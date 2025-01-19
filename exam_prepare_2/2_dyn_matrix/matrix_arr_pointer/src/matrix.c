@@ -16,6 +16,16 @@ err_t create_matrix(matrix_t *matrix, int n, int m)
     if (matrix->matrix == NULL)
         return ERR_MEM_ALLOC;
 
+    for (size_t i = 0; i < (size_t)n; i++)
+    {
+        matrix->matrix[i] = calloc((size_t)m, sizeof(int));
+        if (matrix->matrix[i] == NULL)
+        {
+            free_matrix(*matrix);
+            return ERR_MEM_ALLOC;
+        }
+    }
+
     matrix->n = (size_t)n;
     matrix->m = (size_t)m;
     return ERR_OK;
@@ -45,9 +55,8 @@ void print_matrix(matrix_t matrix)
         {
             printf("%d ", matrix.matrix[i][j]);
         }
+        printf("\n");
     }
-
-    printf("\n");
 }
 
 err_t random_fill(matrix_t *matrix)
@@ -60,7 +69,7 @@ err_t random_fill(matrix_t *matrix)
     {
         for (size_t j = 0; j < matrix->m; j++)
         {
-            matrix->matrix[i * matrix->n + j] = rand() % 256;
+            matrix->matrix[i][j] = rand() % 256;
         }
     }
     return ERR_OK;
