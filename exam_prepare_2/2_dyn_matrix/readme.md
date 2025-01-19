@@ -118,6 +118,7 @@ void free_matrix(matrix_t matrix)
 ![alt text](pictures/5.png)
 ![alt text](pictures/6.png)
 
+
 ### Примущества
 - Относительная простота выделения и освобождения
 памяти. *(Я 10 минут пытался понять что происходит)*
@@ -165,6 +166,60 @@ void free_matrix(matrix_t matrix)
 {
     // Освобождаем все строки, потом освобождаем массив указателей
     free(matrix.matrix[0]);
+    free(matrix.matrix);
+}
+```
+
+## Объеденение подходов 2
+```
+Алгоритм выделения памяти
+Вход: количество строк (n) и количество столбцов (m)
+Выход: указатель на массив строк матрицы (p)
+• Выделить память под массив указателей на строки и
+элементы матрицы (p)
+• Обработать ошибку выделения памяти
+• В цикле по количеству строк матрицы (0 <= i < n)
+– Вычислить адрес i-ой строки матрицы (q)
+– p[i]=q
+```
+### Примущества
+- Простота выделение и освобождения памяти
+- Возможность использования как одномерный массив
+- Перестановка строк через обмен указателей
+### Недостатки
+- Относительная сложность начальное инициализации
+- Отладчик не может отследить выход за пределы строки
+  
+**Выделение памяти**
+```c
+err_t create_matrix(matrix_t *matrix, int n, int m)
+{
+    if (n < 1 || m < 1)
+    {
+        return ERR_SIZE;
+    }
+    if (matrix == NULL)
+        return ERR_ARGS;
+
+    matrix->matrix = malloc((size_t)n * sizeof(int *) + n * m * sizeof(int)); // Юзаю calloc(), чтобы можно было спокойно сделать free(matrix->matrix[i])
+    if (matrix->matrix == NULL)
+        return ERR_MEM_ALLOC;
+
+    for (size_t i = 0; i < (size_t)n; i++)
+    {
+        matrix->matrix[i] = (int *) ((char *)matrix->matrix + n * sizeof(int *) + i * m * sizeof(int)); // "биндим каждую строку"
+    } 
+
+    matrix->n = (size_t)n;
+    matrix->m = (size_t)m;
+    return ERR_OK;
+}
+```
+
+**Освобождение памяти**
+```c
+void free_matrix(matrix_t matrix)
+{
     free(matrix.matrix);
 }
 ```
