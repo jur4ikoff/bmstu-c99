@@ -5,6 +5,7 @@
 
 err_t create_matrix(matrix_t *matrix, int n, int m)
 {
+    int *data;
     if (n < 1 || m < 1)
     {
         return ERR_SIZE;
@@ -12,13 +13,16 @@ err_t create_matrix(matrix_t *matrix, int n, int m)
     if (matrix == NULL)
         return ERR_ARGS;
 
-    matrix->matrix = calloc((size_t)n, sizeof(int)); // Юзаю calloc(), чтобы можно было спокойно сделать free(matrix->matrix[i])
+    matrix->matrix = calloc((size_t)n * (size_t)m, sizeof(int *)); // Юзаю calloc(), чтобы можно было спокойно сделать free(matrix->matrix[i])
     if (matrix->matrix == NULL)
         return ERR_MEM_ALLOC;
 
+    data = calloc((size_t)n, sizeof(int));
+    if (data == NULL)
+        return ERR_MEM_ALLOC;
     for (size_t i = 0; i < (size_t)n; i++)
     {
-        matrix->matrix[i] = calloc((size_t)m, sizeof(int));
+        matrix->matrix[i] = data + i * m;
         if (matrix->matrix[i] == NULL)
         {
             free_matrix(*matrix);

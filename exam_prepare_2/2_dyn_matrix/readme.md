@@ -68,7 +68,7 @@ err_t create_matrix(matrix_t *matrix, int n, int m)
     if (matrix == NULL)
         return ERR_ARGS;
 
-    matrix->matrix = calloc((size_t)n, sizeof(int)); // Юзаю calloc(), чтобы можно было спокойно сделать free(matrix->matrix[i])
+    matrix->matrix = calloc((size_t)n, sizeof(int *)); // Юзаю calloc(), чтобы можно было спокойно сделать free(matrix->matrix[i])
     if (matrix->matrix == NULL)
         return ERR_MEM_ALLOC;
 
