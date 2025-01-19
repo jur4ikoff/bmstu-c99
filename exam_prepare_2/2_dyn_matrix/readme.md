@@ -128,5 +128,45 @@ void free_matrix(matrix_t matrix)
 - Отладчик использования памяти не может отследить выход
 за пределы строки.
 
+**Выделение памяти**
+```c
+err_t create_matrix(matrix_t *matrix, int n, int m)
+{
+    int *data;
+    if (n < 1 || m < 1)
+    {
+        return ERR_SIZE;
+    }
+    if (matrix == NULL)
+        return ERR_ARGS;
+
+    matrix->matrix = calloc((size_t)n, sizeof(int *)); // Юзаю calloc(), чтобы можно было спокойно сделать free(matrix->matrix[i])
+    if (matrix->matrix == NULL)
+        return ERR_MEM_ALLOC;
+
+    data = calloc((size_t)n * (size_t)m, sizeof(int));
+    if (data == NULL)
+        return ERR_MEM_ALLOC;
+
+    for (size_t i = 0; i < (size_t)n; i++)
+    {
+        matrix->matrix[i] = data + i * m;
+    }
+
+    matrix->n = (size_t)n;
+    matrix->m = (size_t)m;
+    return ERR_OK;
+}
+```
+
+**Освобождение памяти**
+```c
+void free_matrix(matrix_t matrix)
+{
+    // Освобождаем все строки, потом освобождаем массив указателей
+    free(matrix.matrix[0]);
+    free(matrix.matrix);
+}
+```
 # Источники
 1. Лекции МГТУ им Н.Э. Баумана, каф. Программная Инженерия.

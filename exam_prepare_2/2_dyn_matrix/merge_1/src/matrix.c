@@ -13,21 +13,17 @@ err_t create_matrix(matrix_t *matrix, int n, int m)
     if (matrix == NULL)
         return ERR_ARGS;
 
-    matrix->matrix = calloc((size_t)n * (size_t)m, sizeof(int *)); // Юзаю calloc(), чтобы можно было спокойно сделать free(matrix->matrix[i])
+    matrix->matrix = calloc((size_t)n, sizeof(int *)); // Юзаю calloc(), чтобы можно было спокойно сделать free(matrix->matrix[i])
     if (matrix->matrix == NULL)
         return ERR_MEM_ALLOC;
 
-    data = calloc((size_t)n, sizeof(int));
+    data = calloc((size_t)n * (size_t)m, sizeof(int));
     if (data == NULL)
         return ERR_MEM_ALLOC;
+
     for (size_t i = 0; i < (size_t)n; i++)
     {
         matrix->matrix[i] = data + i * m;
-        if (matrix->matrix[i] == NULL)
-        {
-            free_matrix(*matrix);
-            return ERR_MEM_ALLOC;
-        }
     }
 
     matrix->n = (size_t)n;
@@ -38,14 +34,8 @@ err_t create_matrix(matrix_t *matrix, int n, int m)
 void free_matrix(matrix_t matrix)
 {
     // Освобождаем все строки, потом освобождаем массив указателей
-    if (matrix.matrix)
-    {
-        for (size_t i = 0; i < matrix.n; i++)
-        {
-            free(matrix.matrix[i]);
-        }
-        free(matrix.matrix);
-    }
+    free(matrix.matrix[0]);
+    free(matrix.matrix);
 }
 
 void print_matrix(matrix_t matrix)
