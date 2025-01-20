@@ -10,7 +10,7 @@ CFLAGS := -std=c99 -Wall -Werror -pedantic -Wfloat-conversion -Wvla -I$(INC_DIR)
 LDFLAGS := -lm
 
 SRC_FILES := $(wildcard $(SRC_DIR)/*.c)
-OUT_FILES := $(SRC_FILES:.c=.o)
+OUT_FILES := $(addprefix $(OUT_DIR)/, $(notdir $(SRC_FILES:.c=.o)))
 
 $(EXE_NAME) : $(OUT_FILES)
 	$(CC) $(LDFLAGS) $^ -o $@
