@@ -12,7 +12,7 @@ LDFLAGS := -lm
 SRC_FILES := $(wildcard $(SRC_DIR)/*.c)
 # Есть 2 варианта сделать список файлов с расширением .о
 # OBJ_FILES := $(patsubst $(SRC_DIR)/%.c, $(OUT_DIR)/%.o, $(SRC_FILES))
-OBJ_FILES := $(SRC_FILES:.c=.o)
+OBJ_FILES := $(addprefix $(OUT_DIR)/, $(notdir $(SRC_FILES:.c=.o)))
 
 # В ручную собираем проект
 $(EXE_NAME) : $(OBJ_FILES)
