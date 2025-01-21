@@ -11,5 +11,4 @@ void print_list(node_t *head);
 void free_list(node_t *head);
 void convert_arr_to_list(node_t **head, int *arr, size_t count);
 void delete_by_task(node_t *head);
-void delete_by_task_v2(node_t *head);
 #endif
