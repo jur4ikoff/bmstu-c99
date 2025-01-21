@@ -43,5 +43,10 @@ int main(void)
         item = list_entry(iter, struct _data_type_, list);
         printf("[LIST] = %d\n", item->el);
     }
+
+    list_for_each_entry(item, &num_list, list)
+    {
+        printf("[LIST2] = %d\n", item->el);
+    }
     return rc;
 }
