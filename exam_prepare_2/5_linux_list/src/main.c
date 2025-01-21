@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 // Структура с данными, лист хранится внутри ноды, за счет того обеспечивается оптимизированное выделение памяти
-typedef struct _data_t__
+typedef struct _data_type_
 {
     int el;
     struct list_head list;
@@ -17,16 +17,16 @@ int main(void)
     // Иниацилизируем голову списка
     LIST_HEAD(num_list);
 
+    // Добавление элементов в список
     data_t *item = NULL;
-
-    for (size_t i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
         item = malloc(sizeof(*item));
         if (item == NULL)
             return ERR_MEM_ALLOC;
-            
+
         // Инициализация данных
-        item->el = (int)i;
+        item->el = i;
         // Нужно инициализировать ноду списка внутри элеента
         INIT_LIST_HEAD(&item->list);
 
@@ -40,7 +40,7 @@ int main(void)
     struct list_head *iter;
     list_for_each(iter, &num_list)
     {
-        item = list_entry(&iter, struct _data_t__, list);
+        item = list_entry(iter, struct _data_type_, list);
         printf("[LIST] = %d\n", item->el);
     }
     return rc;
