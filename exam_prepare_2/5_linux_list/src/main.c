@@ -45,6 +45,11 @@ int main(void)
         PRINT_INT(LIST, item->el);
     }
 
+    list_for_each_entry(item, &num_list, list)
+    {
+        PRINT_INT(LIST2, item->el);
+    }
+
     list_for_each_safe(iter, iter_safe, &num_list)
     {
         item = list_entry(iter, data_t, list);
