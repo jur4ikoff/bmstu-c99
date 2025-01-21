@@ -21,3 +21,6 @@ $(OUT_DIR)/%.o : $(SRC_DIR)/%.c
 .PHONY : clean
 clean:
 	$(RM) ./$(OUT_DIR)/*.o *.o ./$(OUT_DIR)/*.d *.d ./app.exe
+
+debug: CFLAGS += -g3 -O0
+debug: $(EXE_NAME)
