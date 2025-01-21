@@ -61,5 +61,7 @@ err_t main(void)
     node_t *head = NULL;
     convert_int_to_list(&head, number);
     print_queue(head);
+
+    free_list(head);
     return rc;
 }
