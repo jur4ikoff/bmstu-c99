@@ -2,6 +2,7 @@
 #include "list.h"
 #include <stdio.h>
 #include <stdlib.h>
+#define PRINT_INT(name, d) ((printf("[%s] = %d\n", #name, (d))))
 
 // Структура с данными, лист хранится внутри ноды, за счет того обеспечивается оптимизированное выделение памяти
 typedef struct _data_type_
@@ -37,16 +38,19 @@ int main(void)
     //
     // Вывод списка на экран
     //
-    struct list_head *iter;
+    struct list_head *iter, *iter_safe;
     list_for_each(iter, &num_list)
     {
         item = list_entry(iter, struct _data_type_, list);
-        printf("[LIST] = %d\n", item->el);
+        PRINT_INT(LIST, item->el);
     }
 
-    list_for_each_entry(item, &num_list, list)
+    list_for_each_safe(iter, iter_safe, &num_list)
     {
-        printf("[LIST2] = %d\n", item->el);
+        item = list_entry(iter, data_t, list);
+        list_del(iter);
+        free(item);
     }
+
     return rc;
 }
