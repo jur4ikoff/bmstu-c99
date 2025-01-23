@@ -40,6 +40,7 @@
   - [`strdup()`](#strdup)
   - [`getline()`](#getline)
   - [`asprintf()`](#asprintf)
+  - [Feature Test Macro](#feature-test-macro)
 
 
 
@@ -662,7 +663,6 @@ char *strdup(const char *s)
 
 **Пример**
 ```c
-#define _GNU_SOURCE
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h> 
@@ -710,7 +710,6 @@ ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 
 **Пример**
 ```c
-#define _GNU_SOURCE
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h> 
@@ -777,74 +776,44 @@ ssize_t my_getline(char **lineptr, size_t *n, FILE *stream)
 -  Форматирует строку, записывая её в массив. Отличие от sprintf заключается в том, что данная функция берет на себя задачу выделения памяти под результирующую строку.
 -  Является частью `GNU Extensions`, требует `Future Test Macros`
 ```c
-ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+int asprintf(char **restrict lineptr, const char *restrict fmt, ...);
 ```
 **Особенности**
-- Если `lineptr` = `NULL`, то выделяет память
-- Если память уже выделена, автоматически увеличивает её при необходимости.
-- Возвращает количество символов, считанных (включая \n, но исключая завершающий \0)
-- Возвращает -1 при ошибке или достижении конца файла
+- Работает как `sprintf`, но память под результирующую строку выделяется внутри функции.
 
 **Пример**
 ```c
 #define _GNU_SOURCE
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h> 
+#include <stdio.h> 
 int main()  
 { 
-  char *line = NULL; 
-  size_t len = 0; 
-  printf("Enter a line of text: "); 
-  if (getline(&line, &len, stdin) == -1 ); 
-  { 
-    perror("getline failed"); 
-    free(line); 
-    return 1; 
-  } 
-
-  printf("You entered: %s", line); 
-  free(line); 
+  char *buffer; 
+  int num = 42; 
+  asprintf(&buffer, "The number is: %d", num); 
+  printf("%s\n", buffer); 
   return 0; 
-} 
+}
 ```
 
 **Самостоятельная реализация**
 ```c
-ssize_t my_getline(char **lineptr, size_t *n, FILE *stream)  
+int my_asprintf(char **restrict strp, const char *restrict fmt, ...)
 { 
-  if (!lineptr || !n || !stream)
+  if (!strp || !fmt) 
     return -1; 
 
-  size_t pos = 0; 
-  int c; 
-  if (*lineptr == NULL || *n == 0)  
-  { 
-    *n = 128; 
-    *lineptr = malloc(*n); 
-    if (*lineptr == NULL)  
-      return -1; 
-  } 
+  va_list list, cpy; 
+  va_start(list, fmt); 
+  va_copy(cpy, list);  
 
-  while ((c = fgetc(stream)) != EOF)  
-  { 
-    if (pos + 1 >= *n)  
-    { 
-      *n *= 2; 
-      char *new_ptr = realloc(*lineptr, *n); 
-      if (new_ptr == NULL)  
-        return -1; 
-      
-      *lineptr = new_ptr; 
-    } 
-    (*lineptr)[pos++] = c; 
-    if (c == '\n')  
-      break; 
-  } 
-  if (pos == 0 && c == EOF)  
-    return -1; 
-  
-  (*lineptr)[pos] = '\0'; 
-  return pos;
-}
+  size_t res = -1; 
+  size_t size = vsnprintf(NULL, 0, fmt, list) + 1; 
+  *strp = malloc(size * sizeof(char)); 
+  if (*strp) 
+    res = vsprintf(*strp, fmt, cpy); 
+  va_end(cpy); // Не забываем освободить память из-под копии. 
+  va_end(list); 
+  return res; 
+} 
 ```
+## Feature Test Macro
